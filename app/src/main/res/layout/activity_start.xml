@@ -11,7 +11,7 @@
     tools:context="com.polimi.deib.ildiariodigio.StartActivity">
 
     <ImageButton
-        android:id="@+id/ImageButton01"
+        android:id="@+id/ImageButton_enter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/enter"
