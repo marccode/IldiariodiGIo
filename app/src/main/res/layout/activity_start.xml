@@ -10,6 +10,7 @@
     android:background="@drawable/background"
     tools:context="com.polimi.deib.ildiariodigio.StartActivity">
 
+
     <ImageButton
         android:id="@+id/imageButton_enter"
         android:layout_width="200dip"

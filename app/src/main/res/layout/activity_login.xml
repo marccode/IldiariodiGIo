@@ -44,6 +44,15 @@
             android:layout_marginLeft="10dip"
             android:layout_marginRight="5dp" />
 
+
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/button_enter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_enter"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"/>
 
 </RelativeLayout>
