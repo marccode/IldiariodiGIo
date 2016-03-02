@@ -48,24 +48,14 @@
         android:src="@drawable/button_play"
         android:background="#00000000"/>
 
-        <ImageButton
-            android:id="@+id/imageButton_play"
-            android:layout_width="15dp"
-            android:layout_height="15dip"
-            android:gravity="left"
-            android:src="@drawable/play_icon_24"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp" />
 
-        <ImageButton
-            android:id="@+id/imageButton_reset"
-            android:layout_width="15dp"
-            android:layout_height="15dip"
-            android:gravity="right"
-            android:src="@drawable/stop_icon_24"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp" />
-
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/imageButton_reset"
+        android:layout_width="15dp"
+        android:layout_height="15dip"
+        android:gravity="right"
+        android:src="@drawable/stop_icon_24"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="5dp" />
 
 </LinearLayout>
