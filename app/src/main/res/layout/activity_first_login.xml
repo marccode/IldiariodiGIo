@@ -29,68 +29,60 @@
         android:src="@drawable/text_instructions"/>
 
     <ImageButton
-        android:id="@+id/button_enter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/button_modifica"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:background="@drawable/button_enter"
+        android:scaleType="centerInside"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="8dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <ImageButton
+        android:id="@+id/imageButton_upload_kid"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="@drawable/upload_photo_kid"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/button_modifica"
+        android:layout_toStartOf="@+id/button_modifica" />
 
-        <ImageButton
-            android:id="@+id/imageButton_upload_parent"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="200dip"
-            android:background="@drawable/upload_photo_parent"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="200dp"/>
+    <ImageButton
+        android:id="@+id/imageButton_upload_parent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/upload_photo_parent"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_above="@+id/nome_bambino"
+        android:layout_toRightOf="@+id/textView3"
+        android:layout_toEndOf="@+id/textView3"
+        android:layout_marginLeft="52dp"
+        android:layout_marginStart="52dp"/>
 
+    <EditText
+        android:id="@+id/nome_genitori"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/text_field"
+        android:inputType="textCapWords"
+        android:layout_below="@+id/imageButton_upload_kid"
+        android:layout_alignLeft="@+id/imageButton_upload_kid"
+        android:layout_alignStart="@+id/imageButton_upload_kid"/>
 
-        <ImageButton
-            android:id="@+id/imageButton_upload_kid"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="200dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/upload_photo_kid"
-            android:layout_marginTop="200dp"/>
+    <EditText
+        android:id="@+id/nome_bambino"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/text_field"
+        android:inputType="textCapWords"
 
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/nome_genitori"
-            android:layout_weight="0.31"
-            android:layout_width="0dp"
-            android:layout_height="40dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/text_field"
-            android:layout_marginTop="300dp"
-            android:inputType="textCapWords"/>
-
-        <EditText
-            android:id="@+id/nome_bambino"
-            android:layout_weight="0.31"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/text_field"
-            android:layout_marginTop="300dp"
-            android:inputType="textCapWords"/>
-
-
-    </LinearLayout>
+        android:layout_below="@+id/imageButton_upload_kid"
+        android:layout_alignLeft="@+id/imageButton_upload_parent"
+        android:layout_alignStart="@+id/imageButton_upload_parent" />
 
 </RelativeLayout>
