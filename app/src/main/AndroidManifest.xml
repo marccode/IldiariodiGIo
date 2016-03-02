@@ -21,7 +21,7 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".FirstLoginActivity" />
-        <activity android:name=".ModificaActivity" />
+        <activity android:name=".ModificaActivity"/>
         <activity android:name=".ChronometerAudioActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".AudioGridActivity" />
@@ -35,8 +35,9 @@
 
         <activity android:name=".VideoGridActivity" />
         <activity android:name=".ChronometerVideoActivity" />
-        <activity android:name=".ChronometerMenuActivity" />
-        <activity android:name=".AnimationActivity"></activity>
+        <activity android:name=".ChronometerAnimationActivity" />
+        <activity android:name=".AnimationSetUpActivity" />
+        <activity android:name=".BravoActivity"></activity>
     </application>
 
 </manifest>

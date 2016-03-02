@@ -1,288 +1,518 @@
 package com.polimi.deib.ildiariodigio;
 
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import android.app.Activity;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.media.MediaPlayer.OnSeekCompleteListener;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.SurfaceHolder.Callback;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Animation.AnimationListener;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar.OnSeekBarChangeListener;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.polimi.deib.ildiariodigio.R;
 
 
-public class ChronometerVideoActivity extends Activity implements OnSeekBarChangeListener, Callback, OnPreparedListener, OnCompletionListener, OnBufferingUpdateListener,
-        OnClickListener, OnSeekCompleteListener, AnimationListener {
-    private TextView textViewPlayed;
-    private TextView textViewLength;
-    private SeekBar seekBarProgress;
-    private SurfaceView surfaceViewFrame;
-    private ImageView imageViewPauseIndicator;
-    private MediaPlayer player;
+public class ChronometerVideoActivity extends Activity implements SurfaceHolder.Callback {
+
+    private ImageButton button_play;
+    private TextView video_title_texview;
+    private TextView countndown_textview;
+    private SurfaceView surface;
     private SurfaceHolder holder;
-    private ProgressBar progressBarWait;
-    private Timer updateTimer;
-    private Bundle extras;
-    private Animation hideMediaController;
-    private LinearLayout linearLayoutMediaController;
-    private static final String TAG = "androidEx2 = VideoSample";
+    // Media Player
+    private MediaPlayer mp;
+    // Handler to update UI timer, progress bar etc,.
+    private Handler mHandler = new Handler();
+    private SongsManager songManager;
+    private Utilities utils;
+
+
+    String video_title;
+    String video_duration;
+    String video_path;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.videosample);
-        extras = getIntent().getExtras();
+        setContentView(R.layout.activity_chronometer_video);
 
-        linearLayoutMediaController = (LinearLayout) findViewById(R.id.linearLayoutMediaController);
-        linearLayoutMediaController.setVisibility(View.GONE);
 
-        //hideMediaController = AnimationUtils.loadAnimation(this, R.anim.disapearing);
-        //hideMediaController.setAnimationListener(this);
+        Intent i = getIntent(); // gets the previously created intent
+        video_title = i.getStringExtra("title");
+        video_duration= i.getStringExtra("duration");
+        video_path = i.getStringExtra("path");
 
-        imageViewPauseIndicator = (ImageView) findViewById(R.id.imageViewPauseIndicator);
-        imageViewPauseIndicator.setVisibility(View.GONE);
-        if (player != null) {
-            if (!player.isPlaying()) {
-                imageViewPauseIndicator.setVisibility(View.VISIBLE);
-            }
-        }
+        /*
+        video_title = "Julia Balla";
+        video_duration = "10";
+        video_path = "/storage/sdcard/video.webm";
+        */
 
-        textViewPlayed = (TextView) findViewById(R.id.textViewPlayed);
-        textViewLength = (TextView) findViewById(R.id.textViewLength);
-
-        surfaceViewFrame = (SurfaceView) findViewById(R.id.surfaceViewFrame);
-        surfaceViewFrame.setOnClickListener(this);
-        surfaceViewFrame.setClickable(false);
-
-        seekBarProgress = (SeekBar) findViewById(R.id.seekBarProgress);
-        seekBarProgress.setOnSeekBarChangeListener(this);
-        seekBarProgress.setProgress(0);
-
-        progressBarWait = (ProgressBar) findViewById(R.id.progressBarWait);
-
-        holder = surfaceViewFrame.getHolder();
+        // All player buttons
+        button_play = (ImageButton) findViewById(R.id.imageButton_play);
+        video_title_texview = (TextView) findViewById(R.id.textView_video_title);
+        video_title_texview.setText(video_title);
+        countndown_textview = (TextView) findViewById(R.id.textView_countdown);
+        surface = (SurfaceView) findViewById(R.id.surface);
+        holder = surface.getHolder();
         holder.addCallback(this);
+
+        //holder.setFixedSize(400, 300);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        player = new MediaPlayer();
-        player.setOnPreparedListener(this);
-        player.setOnCompletionListener(this);
-        player.setOnBufferingUpdateListener(this);
-        player.setOnSeekCompleteListener(this);
-        player.setScreenOnWhilePlaying(true);
-        player.setDisplay(holder);
-    }
+        // Mediaplayer
+        mp = new MediaPlayer();
+        songManager = new SongsManager();
+        utils = new Utilities();
 
-    private void playVideo() {
-        if (extras.getString("video_path").equals("VIDEO_URI")) {
-            showToast("Please, set the video URI in HelloAndroidActivity.java in onClick(View v) method");
-        } else {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        player.setDataSource(extras.getString("video_path"));
-                        player.prepare();
-                    } catch (IllegalArgumentException e) {
-                        showToast("Error while playing video");
-                        //Log.i(TAG, "========== IllegalArgumentException ===========");
-                        e.printStackTrace();
-                    } catch (IllegalStateException e) {
-                        showToast("Error while playing video");
-                        //Log.i(TAG, "========== IllegalStateException ===========");
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        showToast("Error while playing video. Please, check your network connection.");
-                        //Log.i(TAG, "========== IOException ===========");
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-    }
-
-    private void showToast(final String string) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(ChronometerVideoActivity.this, string, Toast.LENGTH_LONG).show();
-                finish();
+        // Listeners
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp) {
+                //Toast.makeText(getApplicationContext(), "VIDEO ACABADA", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(ChronometerVideoActivity.this, BravoActivity.class);
+                i.putExtra("type", "video");
+                i.putExtra("title", video_title);
+                i.putExtra("duration", video_duration);
+                i.putExtra("path", video_path);
+                ChronometerVideoActivity.this.startActivity(i);
             }
         });
-    }
 
-    private void hideMediaController() {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            linearLayoutMediaController.startAnimation(hideMediaController);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+        // Important
+
+        // Getting all songs list
+        //songsList = songManager.getPlayList();
+
+        // By default play first song
+        //playVideo();
+
+        /**
+         * Play button click event
+         * plays a song and changes button to pause image
+         * pauses a song and changes button to play image
+         * */
+        button_play.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                // check for already playing
+                if (mp.isPlaying()) {
+                    if (mp != null) {
+                        mp.pause();
+                        // Changing button image to play button
+                        button_play.setImageResource(R.drawable.play_icon_24);
+                    }
+                } else {
+                    // Resume song
+                    if (mp != null) {
+                        mp.start();
+                        // Changing button image to pause button
+                        button_play.setImageResource(R.drawable.pause_icon_24);
+                    }
+                }
+
+            }
+        });
+
+        /**
+         * Forward button click event
+         * Forwards song specified seconds
+         * */
+        /*
+        btnForward.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                // get current song position
+                int currentPosition = mp.getCurrentPosition();
+                // check if seekForward time is lesser than song duration
+                if (currentPosition + seekForwardTime <= mp.getDuration()) {
+                    // forward song
+                    mp.seekTo(currentPosition + seekForwardTime);
+                } else {
+                    // forward to end position
+                    mp.seekTo(mp.getDuration());
                 }
             }
-        }).start();
-    }
+        });
+        */
 
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        //Log.i(TAG, "========== onProgressChanged : " + progress + " from user: " + fromUser);
-        if (!fromUser) {
-            textViewPlayed.setText(Integer.toString(progress));
-        }
-    }
+        /**
+         * Backward button click event
+         * Backward song to specified seconds
+         * */
+        /*
+        btnBackward.setOnClickListener(new View.OnClickListener() {
 
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-    }
+            @Override
+            public void onClick(View arg0) {
+                // get current song position
+                int currentPosition = mp.getCurrentPosition();
+                // check if seekBackward time is greater than 0 sec
+                if(currentPosition - seekBackwardTime >= 0){
+                    // forward song
+                    mp.seekTo(currentPosition - seekBackwardTime);
+                }else{
+                    // backward to starting position
+                    mp.seekTo(0);
+                }
 
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        if (player.isPlaying()) {
-            progressBarWait.setVisibility(View.VISIBLE);
-            player.seekTo(seekBar.getProgress() * 1000);
-            //Log.i(TAG, "========== SeekTo : " + seekBar.getProgress());
-        }
-    }
+            }
+        });
+        */
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        // TODO Auto-generated method stub
+        /**
+         * Next button click event
+         * Plays next song by taking currentSongIndex + 1
+         * */
+        /*
+        btnNext.setOnClickListener(new View.OnClickListener() {
 
-    }
+            @Override
+            public void onClick(View arg0) {
+                // check if next song is there or not
+                if(currentSongIndex < (songsList.size() - 1)){
+                    playSong(currentSongIndex + 1);
+                    currentSongIndex = currentSongIndex + 1;
+                }else{
+                    // play first song
+                    playSong(0);
+                    currentSongIndex = 0;
+                }
 
-    public void surfaceCreated(SurfaceHolder holder) {
-        playVideo();
-    }
+            }
+        });
+        */
 
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        // TODO Auto-generated method stub
+        /**
+         * Back button click event
+         * Plays previous song by currentSongIndex - 1
+         * */
+        /*
+        btnPrevious.setOnClickListener(new View.OnClickListener() {
 
-    }
+            @Override
+            public void onClick(View arg0) {
+                if(currentSongIndex > 0){
+                    playSong(currentSongIndex - 1);
+                    currentSongIndex = currentSongIndex - 1;
+                }else{
+                    // play last song
+                    playSong(songsList.size() - 1);
+                    currentSongIndex = songsList.size() - 1;
+                }
 
-    public void onPrepared(MediaPlayer mp) {
-        Log.i(TAG, "========== onPrepared ===========");
-        int duration = mp.getDuration() / 1000; // duration in seconds
-        seekBarProgress.setMax(duration);
-        textViewLength.setText(Integer.toString(duration));
-        progressBarWait.setVisibility(View.GONE);
+            }
+        });
+        */
 
-        // Get the dimensions of the video
-        int videoWidth = player.getVideoWidth();
-        int videoHeight = player.getVideoHeight();
-        float videoProportion = (float) videoWidth / (float) videoHeight;
-        Log.i(TAG, "VIDEO SIZES: W: " + videoWidth + " H: " + videoHeight + " PROP: " + videoProportion);
+        /**
+         * Button Click event for Repeat button
+         * Enables repeat flag to true
+         * */
+        /*
+        btnRepeat.setOnClickListener(new View.OnClickListener() {
 
-        // Get the width of the screen
-        int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-        int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
-        float screenProportion = (float) screenWidth / (float) screenHeight;
-        Log.i(TAG, "VIDEO SIZES: W: " + screenWidth + " H: " + screenHeight + " PROP: " + screenProportion);
+            @Override
+            public void onClick(View arg0) {
+                if(isRepeat){
+                    isRepeat = false;
+                    Toast.makeText(getApplicationContext(), "Repeat is OFF", Toast.LENGTH_SHORT).show();
+                    btnRepeat.setImageResource(R.drawable.btn_repeat);
+                }else{
+                    // make repeat to true
+                    isRepeat = true;
+                    Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
+                    // make shuffle to false
+                    isShuffle = false;
+                    btnRepeat.setImageResource(R.drawable.btn_repeat_focused);
+                    btnShuffle.setImageResource(R.drawable.btn_shuffle);
+                }
+            }
+        });
+        */
 
-        // Get the SurfaceView layout parameters
-        android.view.ViewGroup.LayoutParams lp = surfaceViewFrame.getLayoutParams();
+        /**
+         * Button Click event for Shuffle button
+         * Enables shuffle flag to true
+         * */
+        /*
+        btnShuffle.setOnClickListener(new View.OnClickListener() {
 
-        if (videoProportion > screenProportion) {
-            lp.width = screenWidth;
-            lp.height = (int) ((float) screenWidth / videoProportion);
-        } else {
-            lp.width = (int) (videoProportion * (float) screenHeight);
-            lp.height = screenHeight;
-        }
+            @Override
+            public void onClick(View arg0) {
+                if(isShuffle){
+                    isShuffle = false;
+                    Toast.makeText(getApplicationContext(), "Shuffle is OFF", Toast.LENGTH_SHORT).show();
+                    btnShuffle.setImageResource(R.drawable.btn_shuffle);
+                }else{
+                    // make repeat to true
+                    isShuffle= true;
+                    Toast.makeText(getApplicationContext(), "Shuffle is ON", Toast.LENGTH_SHORT).show();
+                    // make shuffle to false
+                    isRepeat = false;
+                    btnShuffle.setImageResource(R.drawable.btn_shuffle_focused);
+                    btnRepeat.setImageResource(R.drawable.btn_repeat);
+                }
+            }
+        });
+        */
 
-        // Commit the layout parameters
-        surfaceViewFrame.setLayoutParams(lp);
+        /**
+         * Button Click event for Play list click event
+         * Launches list activity which displays list of songs
+         * */
+        /*
+        btnPlaylist.setOnClickListener(new View.OnClickListener() {
 
-        // Start video
-        if (!player.isPlaying()) {
-            player.start();
-            updateMediaProgress();
-            linearLayoutMediaController.setVisibility(View.VISIBLE);
-            hideMediaController();
-        }
-        surfaceViewFrame.setClickable(true);
-    }
+            @Override
+            public void onClick(View arg0) {
+                Intent i = new Intent(getApplicationContext(), PlayListActivity.class);
+                startActivityForResult(i, 100);
+            }
+        });
+        */
 
-    public void onCompletion(MediaPlayer mp) {
-        mp.stop();
-        if (updateTimer != null) {
-            updateTimer.cancel();
-        }
-        finish();
     }
 
     /**
-     * Change progress of mediaController
+     * Receiving song index from playlist view
+     * and play the song
      * */
-    private void updateMediaProgress() {
-        updateTimer = new Timer("progress Updater");
-        updateTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        seekBarProgress.setProgress(player.getCurrentPosition() / 1000);
-                    }
-                });
-            }
-        }, 0, 1000);
+    /*
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 100){
+            currentSongIndex = data.getExtras().getInt("songIndex");
+            // play selected song
+            playSong(currentSongIndex);
+        }
+
+    }
+    */
+
+    public void playVideo() {
+
     }
 
-    public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        int progress = (int) ((float) mp.getDuration() * ((float) percent / (float) 100));
-        seekBarProgress.setSecondaryProgress(progress / 1000);
+    /**
+     * Update timer on seekbar
+     */
+    /*
+    public void updateProgressBar() {
+        mHandler.postDelayed(mUpdateTimeTask, 100);
+    }
+    */
+
+    public void updateTimer() {
+        mHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
-    public void onClick(View v) {
-        if (v.getId() == R.id.surfaceViewFrame) {
-            if (linearLayoutMediaController.getVisibility() == View.GONE) {
-                linearLayoutMediaController.setVisibility(View.VISIBLE);
-                hideMediaController();
-            } else if (player != null) {
-                if (player.isPlaying()) {
-                    player.pause();
-                    imageViewPauseIndicator.setVisibility(View.VISIBLE);
-                } else {
-                    player.start();
-                    imageViewPauseIndicator.setVisibility(View.GONE);
-                }
+    /**
+     * Background Runnable thread
+     */
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            long totalDuration = mp.getDuration();
+            long currentDuration = mp.getCurrentPosition();
+
+            // Displaying Total Duration time
+            //songTotalDurationLabel.setText("" + utils.milliSecondsToTimer(totalDuration));
+            // Displaying time completed playing
+            countndown_textview.setText("" + utils.milliSecondsToTimer(totalDuration - currentDuration));
+
+            // Updating progress bar
+            //int progress = (int) (utils.getProgressPercentage(currentDuration, totalDuration));
+            //Log.d("Progress", ""+progress);
+            //songProgressBar.setProgress(progress);
+
+            // Running this thread after 100 milliseconds
+            mHandler.postDelayed(this, 100);
+        }
+    };
+
+    /**
+     *
+     * */
+    /*
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
+
+    }
+    */
+
+    /**
+     * When user starts moving the progress handler
+     */
+    /*
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        // remove message Handler from updating progress bar
+        mHandler.removeCallbacks(mUpdateTimeTask);
+    }
+    */
+
+    /**
+     * When user stops moving the progress hanlder
+     */
+    /*
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        int totalDuration = mp.getDuration();
+        int currentPosition = utils.progressToTimer(seekBar.getProgress(), totalDuration);
+
+        // forward or backward to certain seconds
+        mp.seekTo(currentPosition);
+
+        // update timer progress again
+        //updateProgressBar();
+    }
+    */
+    /**
+     * On Song Playing completed
+     * if repeat is ON play same song again
+     * if shuffle is ON play random song
+     */
+    /*
+    public void onCompletion(MediaPlayer arg0) {
+        // check for repeat is ON or OFF
+        if (isRepeat) {
+            // repeat is on play same song again
+            playSong(currentSongIndex);
+        } else if (isShuffle) {
+            // shuffle is on - play a random song
+            Random rand = new Random();
+            currentSongIndex = rand.nextInt((songsList.size() - 1) - 0 + 1) + 0;
+            playSong(currentSongIndex);
+        } else {
+            // no repeat or shuffle ON - play next song
+            if (currentSongIndex < (songsList.size() - 1)) {
+                playSong(currentSongIndex + 1);
+                currentSongIndex = currentSongIndex + 1;
+            } else {
+                // play first song
+                playSong(0);
+                currentSongIndex = 0;
             }
         }
     }
+    */
 
-    public void onSeekComplete(MediaPlayer mp) {
-        progressBarWait.setVisibility(View.GONE);
+    public void preparePlayer() {
+        try {
+            mp.reset();
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    int videoWidth = mp.getVideoWidth();
+                    int videoHeight = mp.getVideoHeight();
+                    float videoProportion = (float) videoWidth / (float) videoHeight;
+
+
+                    // Get the width of the screen
+                    int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+                    int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+                    float screenProportion = (float) screenWidth / (float) screenHeight;
+
+                    Log.e("E", "Video Proportion: " + Float.toString(videoProportion));
+                    Log.e("E", "Screen Proportion: " + Float.toString(screenProportion));
+
+
+                    // Get the SurfaceView layout parameters
+                    android.view.ViewGroup.LayoutParams lp = surface.getLayoutParams();
+                    if (videoProportion > screenProportion) {
+                        lp.width = screenWidth;
+                        lp.height = (int) ((float) screenWidth / videoProportion);
+                    } else {
+                        lp.width = (int) (videoProportion * (float) screenHeight);
+                        lp.height = screenHeight;
+                    }
+
+                    // Commit the layout parameters
+                    surface.setLayoutParams(lp);
+
+                    button_play.setImageResource(R.drawable.pause_icon_24);
+                    updateTimer();
+                    mp.start();
+                }
+            });
+            mp.setDataSource(video_path);
+
+
+
+            //holder.setFixedSize(lp.width, lp.height);
+            //holder.setFixedSize(400, 300);
+            mp.setDisplay(holder);
+
+            // ----
+
+            mp.prepareAsync();
+            // Displaying Song title
+            //String songTitle = songsList.get(songIndex).get("songTitle");
+            //songTitleLabel.setText(songTitle);
+
+            // Changing Button Image to pause image
+
+            // set Progress bar values
+
+
+            // Updating progress bar
+            //);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void onAnimationEnd(Animation animation) {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mp.release();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
         // TODO Auto-generated method stub
 
     }
 
-    public void onAnimationRepeat(Animation animation) {
+    @Override
+    public void surfaceCreated(SurfaceHolder arg0) {
+        // TODO Auto-generated method stub
+        preparePlayer();
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder arg0) {
         // TODO Auto-generated method stub
 
     }
 
-    public void onAnimationStart(Animation animation) {
-        linearLayoutMediaController.setVisibility(View.GONE);
-    }
 }

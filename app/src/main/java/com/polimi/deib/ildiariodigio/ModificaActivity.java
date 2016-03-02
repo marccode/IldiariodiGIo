@@ -16,6 +16,7 @@ public class ModificaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
         setContentView(R.layout.activity_modifica);
 
         proporciones=(View) getWindowManager();
@@ -29,5 +30,6 @@ public class ModificaActivity extends AppCompatActivity {
                 ModificaActivity.this.startActivity(myIntent);
             }
         });
+        */
     }
 }

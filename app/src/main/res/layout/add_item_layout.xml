@@ -8,7 +8,7 @@
         android:id="@+id/imageButton_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/plus_icon_48"
+        android:background="@drawable/button_add"
         android:layout_centerInParent="true"
         android:clickable="true"/>
 
