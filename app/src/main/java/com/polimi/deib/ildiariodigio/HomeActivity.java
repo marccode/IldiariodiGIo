@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Cronometro", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(HomeActivity.this, VideoGridActivity.class);
+                Intent myIntent = new Intent(HomeActivity.this, ChronometerMenuActivity.class);
                 HomeActivity.this.startActivity(myIntent);
             }
         });
