@@ -1,5 +1,6 @@
 package com.polimi.deib.ildiariodigio;
 
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,7 @@ import com.polimi.deib.ildiariodigio.R;
 public class ChronometerAudioActivity extends Activity {
 
     private ImageButton btnPlay;
-    private ImageButton btnReset;
+    private ImageButton btnBack;
     //private ImageButton btnForward;
     //private ImageButton btnBackward;
     //private ImageButton btnNext;
@@ -43,12 +44,12 @@ public class ChronometerAudioActivity extends Activity {
     //private SeekBar songProgressBar;
     private TextView songTitle;
     private TextView songCurrentDurationLabel;
+    private TextView min_textview;
     //private TextView songTotalDurationLabel;
     // Media Player
     private MediaPlayer mp;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();
-    ;
     private SongsManager songManager;
     private Utilities utils;
     private int seekForwardTime = 5000; // 5000 milliseconds
@@ -74,18 +75,26 @@ public class ChronometerAudioActivity extends Activity {
 
         // All player buttons
         btnPlay = (ImageButton) findViewById(R.id.imageButton_play);
-        btnReset = (ImageButton) findViewById(R.id.imageButton_reset);
-        //btnBackward = (ImageButton) findViewById(R.id.btnBackward);
-        //btnNext = (ImageButton) findViewById(R.id.btnNext);
-        //btnPrevious = (ImageButton) findViewById(R.id.btnPrevious);
-        //btnPlaylist = (ImageButton) findViewById(R.id.btnPlaylist);
-        //btnRepeat = (ImageButton) findViewById(R.id.btnRepeat);
-        //btnShuffle = (ImageButton) findViewById(R.id.btnShuffle);
-        //songProgressBar = (SeekBar) findViewById(R.id.seekBar_song);
+        btnBack = (ImageButton) findViewById(R.id.imageButton_back);
+
+        // Title
         songTitle = (TextView) findViewById(R.id.textView_songtitle);
+        Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
+        songTitle.setTypeface(tf);
+        songTitle.setTextColor(getResources().getColor(R.color.title_grey));
         songTitle.setText(song_title);
+
+        // Time
         songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
-        //songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
+        tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static-Bold.otf");
+        songCurrentDurationLabel.setTextColor(getResources().getColor(R.color.orange2));
+        songCurrentDurationLabel.setTypeface(tf);
+
+        // MIN
+        min_textview = (TextView) findViewById(R.id.textView_min);
+        //tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static.otf");
+        min_textview.setTextColor(getResources().getColor(R.color.light_grey));
+        min_textview.setTypeface(tf);
 
         // Mediaplayer
         mp = new MediaPlayer();
@@ -96,7 +105,14 @@ public class ChronometerAudioActivity extends Activity {
         //songProgressBar.setOnSeekBarChangeListener(this); // Important
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
-                Toast.makeText(getApplicationContext(), "CANÇO ACABADA", Toast.LENGTH_SHORT).show();            }
+                //Toast.makeText(getApplicationContext(), "CANÇO ACABADA", Toast.LENGTH_SHORT).show();            }
+                Intent i = new Intent(ChronometerAudioActivity.this, BravoActivity.class);
+                i.putExtra("type", "song");
+                i.putExtra("title", song_title);
+                i.putExtra("duration", song_duration);
+                i.putExtra("path", song_path);
+                ChronometerAudioActivity.this.startActivity(i);
+            }
         });
 
         // Important
@@ -121,17 +137,28 @@ public class ChronometerAudioActivity extends Activity {
                     if (mp != null) {
                         mp.pause();
                         // Changing button image to play button
-                        btnPlay.setImageResource(R.drawable.play_icon_24);
+                        btnPlay.setImageResource(R.drawable.button_play);
                     }
                 } else {
                     // Resume song
                     if (mp != null) {
                         mp.start();
                         // Changing button image to pause button
-                        btnPlay.setImageResource(R.drawable.pause_icon_24);
+                        btnPlay.setImageResource(R.drawable.button_pause);
                     }
                 }
 
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                //Intent i = new Intent(ChronometerAudioActivity.this, AudioGridActivity.class);
+                //ChronometerAudioActivity.this.startActivity(i);
+                //mp.release();
+                finish();
             }
         });
 
@@ -322,7 +349,7 @@ public class ChronometerAudioActivity extends Activity {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     Log.e("E", "Media player has been loaded to memory !");
-                    btnPlay.setImageResource(R.drawable.pause_icon_24);
+                    btnPlay.setImageResource(R.drawable.button_pause);
                     //songTotalDurationLabel.setText(song_duration);
                     songCurrentDurationLabel.setText(Integer.toString(mp.getCurrentPosition()));
                     //songProgressBar.setProgress(0);
@@ -463,6 +490,7 @@ public class ChronometerAudioActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacks(mUpdateTimeTask);
         mp.release();
     }
 

@@ -1,57 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/button_back"
+        android:background="#00000000"/>
 
     <TextView
         android:id="@+id/textView_songtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:gravity="center" />
+        android:textSize="40sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
 
     <TextView
         android:id="@+id/songCurrentDurationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:textSize="20sp"
-        android:gravity="left" />
+        android:textSize="50sp"
+        android:layout_above="@+id/textView_min"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/textView_min"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dip"
-        android:textSize="20sp"
-        android:gravity="center"
+        android:textSize="25sp"
+        android:layout_centerInParent="true"
         android:text="MIN"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
+    <ImageButton
+        android:id="@+id/imageButton_play"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textView_min"
+        android:src="@drawable/button_play"
+        android:background="#00000000"/>
 
-        <ImageButton
-            android:id="@+id/imageButton_play"
-            android:layout_width="15dp"
-            android:layout_height="15dip"
-            android:gravity="left"
-            android:src="@drawable/play_icon_24"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp" />
-
-        <ImageButton
-            android:id="@+id/imageButton_reset"
-            android:layout_width="15dp"
-            android:layout_height="15dip"
-            android:gravity="right"
-            android:src="@drawable/stop_icon_24"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="5dp" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

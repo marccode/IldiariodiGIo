@@ -14,6 +14,7 @@ public class ModificaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
         setContentView(R.layout.activity_modifica);
 
         next_button = (ImageButton)findViewById(R.id.button_modifica);
@@ -25,5 +26,6 @@ public class ModificaActivity extends AppCompatActivity {
                 ModificaActivity.this.startActivity(myIntent);
             }
         });
+        */
     }
 }

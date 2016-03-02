@@ -25,7 +25,6 @@ public class SongsManager {
     public ArrayList<HashMap<String, String>> getPlayList(){
         File home = new File(MEDIA_PATH);
 
-        /*
         if (home.listFiles(new FileExtensionFilter()).length > 0) {
             for (File file : home.listFiles(new FileExtensionFilter())) {
                 HashMap<String, String> song = new HashMap<String, String>();
@@ -36,7 +35,6 @@ public class SongsManager {
                 songsList.add(song);
             }
         }
-        */
         // return songs list array
         return songsList;
     }
