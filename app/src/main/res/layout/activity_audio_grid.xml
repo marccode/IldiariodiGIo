@@ -26,24 +26,20 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp" />
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/container_scroll_view"
-        android:layout_width="wrap_content"
-        android:layout_height="500dp"
-        android:layout_below="@id/textview_activity_title"
-        android:paddingTop="40dp"
-        android:layout_centerInParent="true" >
 
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/grid_audios"
+            android:layout_below="@id/textview_activity_title"
+
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:padding="10dp"
             android:verticalSpacing="10dp"
             android:horizontalSpacing="10dp"
-            android:numColumns="4" />
+            android:numColumns="4"
+            android:layout_marginBottom="70dp"
+            android:layout_marginTop="35dp"/>
 
-    </ScrollView>
 
     <ImageButton
         android:id="@+id/imageButton_next"

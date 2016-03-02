@@ -87,8 +87,8 @@ public class ChronometerAudioActivity extends Activity {
         // Time
         songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
         tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static-Bold.otf");
-        songCurrentDurationLabel.setTextColor(getResources().getColor(R.color.orange2));
         songCurrentDurationLabel.setTypeface(tf);
+        songCurrentDurationLabel.setTextColor(getResources().getColor(R.color.orange));
 
         // MIN
         min_textview = (TextView) findViewById(R.id.textView_min);

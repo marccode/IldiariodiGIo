@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,10 +36,37 @@ public class VideoGridActivity extends AppCompatActivity {
     private MediaManager video_manager;
     private ArrayList<HashMap<String, String>> all_videos = new ArrayList<HashMap<String, String>>();
 
+    private String title_selected;
+    private String duration_selected;
+    private String path_selected;
+    private  int selected;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_grid);
+
+        selected = -1;
+
+        TextView tv = (TextView) findViewById(R.id.textview_activity_title);
+        Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
+        tv.setTypeface(tf);
+        tv.setTextColor(getResources().getColor(R.color.title_grey));
+
+        ImageButton btnNext = (ImageButton) findViewById(R.id.imageButton_next);
+        btnNext.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                if (selected >= 0) {
+                    Intent i = new Intent(VideoGridActivity.this, ChronometerVideoActivity.class);
+                    i.putExtra("title", title_selected);
+                    i.putExtra("duration", duration_selected);
+                    i.putExtra("path", path_selected);
+                    VideoGridActivity.this.startActivity(i);
+                }
+            }
+        });
 
         video_manager = new MediaManager();
         all_videos = video_manager.getAllVideos();
@@ -71,9 +99,6 @@ public class VideoGridActivity extends AppCompatActivity {
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<String> paths = new ArrayList<String>();
 
-
-        //private String[] times = ["3:42", "4:11", "3:35", "3:12", "4:53", "4:09"];
-        //private String[] names = ["Vull", "Corbelles", "Estiu", "Hivern", "imperfeccions", "Falling"];
 
         public GridAdapter(Context c) {
             mContext = c;
@@ -116,36 +141,42 @@ public class VideoGridActivity extends AppCompatActivity {
 
                 RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_audio_button);
                 //LayerDrawable layer = (LayerDrawable) rl.getBackground();
-                LayerDrawable layer = (LayerDrawable) getResources().getDrawable(R.drawable.audio_button);
+                //LayerDrawable layer = (LayerDrawable) getResources().getDrawable(R.drawable.audio_button);
                 //Drawable bm = layer.getDrawable(1);
-                Bitmap bMap = ThumbnailUtils.createVideoThumbnail(paths.get(position), MediaStore.Video.Thumbnails.MINI_KIND);
-                Drawable d = new BitmapDrawable(getResources(), bMap);
+                //Bitmap bMap = ThumbnailUtils.createVideoThumbnail(paths.get(position), MediaStore.Video.Thumbnails.MINI_KIND);
+                //Drawable d = new BitmapDrawable(getResources(), bMap);
                 //rl.setBackground(d);
-                if (layer != null) {
-                    Log.e("TAG", "layer is NOT null");
+
+                //layer.setDrawableByLayerId(0, d);
+                rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_not_selected));
+                //rl.setBackground(layer);
+
+                if (position == selected) {
+                    rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_selected));
                 }
                 else {
-                    Log.e("TAG", "layer IS null");
+                    rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_not_selected));
                 }
-                layer.setDrawableByLayerId(0, d);
-                //rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_not_selected));
-                rl.setBackground(layer);
 
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(VideoGridActivity.this, ChronometerVideoActivity.class);
-                        i.putExtra("title", names.get(position));
-                        i.putExtra("duration", times.get(position));
-                        i.putExtra("path", paths.get(position));
-                        VideoGridActivity.this.startActivity(i);
+                        if (position == selected) {
+                            selected = -1;
+                        }
+                        else {
+                            title_selected = names.get(position);
+                            duration_selected = times.get(position);
+                            path_selected = paths.get(position);
+                            selected = position;
+                        }
+                        notifyDataSetChanged();
                     }
                 });
 
                 rowView.setOnLongClickListener(new View.OnLongClickListener() {
 
                     public boolean onLongClick(View v) {
-                        // Crear Dialog per confirmar borrar
                         AlertDialog.Builder alert = new AlertDialog.Builder(VideoGridActivity.this);
                         alert.setTitle("Eliminare video");
                         alert.setMessage("Vuoi eliminare il video \"" + names.get(position) + "\"?");
@@ -161,6 +192,7 @@ public class VideoGridActivity extends AppCompatActivity {
                                 times.remove(position);
                                 paths.remove(position);
                                 dialog.dismiss();
+                                selected = -1;
                                 notifyDataSetChanged();
 
                             }
@@ -181,15 +213,12 @@ public class VideoGridActivity extends AppCompatActivity {
             else {
 
                 rowView = inflater.inflate(R.layout.add_item_layout, null);
-                RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_audio_button);
+                RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_add_audio_button);
                 rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Toast.makeText(getApplicationContext(), "ADD SONG", Toast.LENGTH_SHORT).show();
-                        // Create Dialog:
                         AlertDialog.Builder builderSingle = new AlertDialog.Builder(VideoGridActivity.this);
-                        //builderSingle.setIcon(R.drawable.ic_launcher);
                         builderSingle.setTitle("Seleziona un video");
 
                         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
@@ -198,7 +227,6 @@ public class VideoGridActivity extends AppCompatActivity {
 
                         for (int i = 0; i < all_videos.size(); ++i) {
                             arrayAdapter.add(all_videos.get(i).get("videoTitle"));
-                            //mp.setDataSource(songsList.get(songIndex).get("songPath"));
                         }
 
                         builderSingle.setNegativeButton(
@@ -215,16 +243,16 @@ public class VideoGridActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        //String strName = arrayAdapter.getItem(which);
                                         String title = all_videos.get(which).get("videoTitle");
                                         String path = all_videos.get(which).get("videoPath");
+
                                         // Find Duration:
                                         Uri uri = Uri.parse(path);
                                         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                                         mmr.setDataSource(getApplicationContext(), uri);
                                         int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                                        // Add to Database
 
+                                        // Add to Database
                                         DBAdapter db = new DBAdapter(mContext);
                                         db.open();
                                         db.addAudio(title, path, duration);

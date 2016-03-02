@@ -7,7 +7,6 @@
     <color name="black">#000000</color>
     <color name="dark_grey">#737373</color>
     <color name="light_grey">#BDBBB9</color>
-    <color name="orange">#F7A311</color>
-    <color name="orange2">#E6A639</color>
+    <color name="orange">#E6A639</color>
     <color name="title_grey">#474747</color>
 </resources>

@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativelayout_audio_button"
+    android:id="@+id/relativelayout_add_audio_button"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true" >
 
     <ImageButton
         android:id="@+id/imageButton_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button_add"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
         android:layout_centerInParent="true"
-        android:clickable="true"/>
+        android:clickable="false" />
 
 </RelativeLayout>

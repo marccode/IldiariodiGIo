@@ -1,5 +1,6 @@
 package com.polimi.deib.ildiariodigio;
 
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -34,9 +35,13 @@ import com.polimi.deib.ildiariodigio.R;
 
 public class ChronometerVideoActivity extends Activity implements SurfaceHolder.Callback {
 
-    private ImageButton button_play;
-    private TextView video_title_texview;
+    private ImageButton btnPlay;
+    private ImageButton btnBack;
+
+    private TextView videoTitle;
     private TextView countndown_textview;
+    private TextView min_textview;
+
     private SurfaceView surface;
     private SurfaceHolder holder;
     // Media Player
@@ -69,10 +74,28 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
         */
 
         // All player buttons
-        button_play = (ImageButton) findViewById(R.id.imageButton_play);
-        video_title_texview = (TextView) findViewById(R.id.textView_video_title);
-        video_title_texview.setText(video_title);
+        btnPlay = (ImageButton) findViewById(R.id.imageButton_play);
+        btnBack = (ImageButton) findViewById(R.id.imageButton_back);
+
+        // Title
+        videoTitle = (TextView) findViewById(R.id.textView_video_title);
+        Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
+        videoTitle.setTypeface(tf);
+        videoTitle.setTextColor(getResources().getColor(R.color.title_grey));
+        videoTitle.setText(video_title);
+
+        // Time
         countndown_textview = (TextView) findViewById(R.id.textView_countdown);
+        tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static-Bold.otf");
+        countndown_textview.setTypeface(tf);
+        countndown_textview.setTextColor(getResources().getColor(R.color.orange));
+
+        // MIN
+        min_textview = (TextView) findViewById(R.id.textView_min);
+        //tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static.otf");
+        min_textview.setTextColor(getResources().getColor(R.color.light_grey));
+        min_textview.setTypeface(tf);
+
         surface = (SurfaceView) findViewById(R.id.surface);
         holder = surface.getHolder();
         holder.addCallback(this);
@@ -111,7 +134,7 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
          * plays a song and changes button to pause image
          * pauses a song and changes button to play image
          * */
-        button_play.setOnClickListener(new View.OnClickListener() {
+        btnPlay.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -120,19 +143,31 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
                     if (mp != null) {
                         mp.pause();
                         // Changing button image to play button
-                        button_play.setImageResource(R.drawable.play_icon_24);
+                        btnPlay.setImageResource(R.drawable.button_play);
                     }
                 } else {
                     // Resume song
                     if (mp != null) {
                         mp.start();
                         // Changing button image to pause button
-                        button_play.setImageResource(R.drawable.pause_icon_24);
+                        btnPlay.setImageResource(R.drawable.button_pause);
                     }
                 }
 
             }
         });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                //Intent i = new Intent(ChronometerAudioActivity.this, AudioGridActivity.class);
+                //ChronometerAudioActivity.this.startActivity(i);
+                //mp.release();
+                finish();
+            }
+        });
+
 
         /**
          * Forward button click event
@@ -454,7 +489,7 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
                     // Commit the layout parameters
                     surface.setLayoutParams(lp);
 
-                    button_play.setImageResource(R.drawable.pause_icon_24);
+                    btnPlay.setImageResource(R.drawable.button_pause);
                     updateTimer();
                     mp.start();
                 }
@@ -493,6 +528,7 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacks(mUpdateTimeTask);
         mp.release();
     }
 

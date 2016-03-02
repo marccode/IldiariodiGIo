@@ -33,14 +33,14 @@ public class AudioGridActivity extends AppCompatActivity {
     private String title_selected;
     private String duration_selected;
     private String path_selected;
-    private  boolean selected;
+    private  int selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_grid);
 
-        selected = false;
+        selected = -1;
 
         TextView tv = (TextView) findViewById(R.id.textview_activity_title);
         Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
@@ -52,7 +52,7 @@ public class AudioGridActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                if (selected) {
+                if (selected >= 0) {
                     Intent i = new Intent(AudioGridActivity.this, ChronometerAudioActivity.class);
                     i.putExtra("title", title_selected);
                     i.putExtra("duration", duration_selected);
@@ -122,6 +122,7 @@ public class AudioGridActivity extends AppCompatActivity {
                 rowView = inflater.inflate(R.layout.audio_button_layout, null);
                 TextView time_textView = (TextView) rowView.findViewById(R.id.audio_button_time_textView);
                 TextView name_textView = (TextView) rowView.findViewById(R.id.audio_button_name_textView);
+
                 Typeface tf = Typeface.createFromAsset(mContext.getAssets(), "fonts/Static/Static.otf");
                 time_textView.setTypeface(tf);
                 name_textView.setTypeface(tf);
@@ -133,19 +134,28 @@ public class AudioGridActivity extends AppCompatActivity {
                 name_textView.setText(names.get(position));
 
                 RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_audio_button);
-                rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
-                //rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_selected));
+                //rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
 
+                if (position == selected) {
+                    rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_selected));
+                }
+                else {
+                    rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_not_selected));
+                }
 
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        title_selected = names.get(position);
-                        duration_selected = times.get(position);
-                        path_selected = paths.get(position);
-                        selected = true;
-                        //RelativeLayout rl2 = (RelativeLayout) rowView.findViewById(R.id.relativelayout_audio_button);
-                        //rl2.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_selected));
+                        if (position == selected) {
+                            selected = -1;
+                        }
+                        else {
+                            title_selected = names.get(position);
+                            duration_selected = times.get(position);
+                            path_selected = paths.get(position);
+                            selected = position;
+                        }
+                        notifyDataSetChanged();
                     }
                 });
 
@@ -168,6 +178,7 @@ public class AudioGridActivity extends AppCompatActivity {
                                 times.remove(position);
                                 paths.remove(position);
                                 dialog.dismiss();
+                                selected = -1;
                                 notifyDataSetChanged();
 
                             }
@@ -188,7 +199,7 @@ public class AudioGridActivity extends AppCompatActivity {
             else {
 
                 rowView = inflater.inflate(R.layout.add_item_layout, null);
-                RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_audio_button);
+                RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_add_audio_button);
                 rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -197,7 +208,6 @@ public class AudioGridActivity extends AppCompatActivity {
 
                         // Create Dialog:
                         AlertDialog.Builder builderSingle = new AlertDialog.Builder(AudioGridActivity.this);
-                        //builderSingle.setIcon(R.drawable.ic_launcher);
                         builderSingle.setTitle("Seleziona una canzone");
 
                         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
@@ -206,7 +216,6 @@ public class AudioGridActivity extends AppCompatActivity {
 
                         for (int i = 0; i < all_songs.size(); ++i) {
                             arrayAdapter.add(all_songs.get(i).get("songTitle"));
-                            //mp.setDataSource(songsList.get(songIndex).get("songPath"));
                         }
 
                         builderSingle.setNegativeButton(
@@ -223,16 +232,16 @@ public class AudioGridActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        //String strName = arrayAdapter.getItem(which);
                                         String title = all_songs.get(which).get("songTitle");
                                         String path = all_songs.get(which).get("songPath");
+
                                         // Find Duration:
                                         Uri uri = Uri.parse(path);
                                         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                                         mmr.setDataSource(getApplicationContext(), uri);
                                         int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                                        // Add to Database
 
+                                        // Add to Database
                                         DBAdapter db = new DBAdapter(mContext);
                                         db.open();
                                         db.addSong(title, path, duration);
