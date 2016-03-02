@@ -32,9 +32,10 @@ public class HomeActivity extends AppCompatActivity {
         button_cronometro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Cronometro", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(HomeActivity.this, ChronometerMenuActivity.class);
-                HomeActivity.this.startActivity(myIntent);
+                //Toast.makeText(getApplicationContext(), "Cronometro", Toast.LENGTH_LONG).show();
+                //Intent myIntent = new Intent(HomeActivity.this, ChronometerMenuActivity.class);
+                Intent i = new Intent(HomeActivity.this, ChronometerMenuActivity.class);
+                HomeActivity.this.startActivity(i);
             }
         });
 

@@ -62,6 +62,15 @@ public class AudioGridActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton btnBack = (ImageButton) findViewById(R.id.imageButton_back);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                finish();
+            }
+        });
+
 
         song_manager = new MediaManager();
         all_songs = song_manager.getAllSongs();

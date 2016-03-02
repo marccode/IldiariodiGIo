@@ -29,8 +29,8 @@ public class ChronometerMenuActivity extends AppCompatActivity {
         audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Cronometro", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(ChronometerMenuActivity.this, ChronometerAudioActivity.class);
+                //Toast.makeText(getApplicationContext(), "Cronometro", Toast.LENGTH_LONG).show();
+                Intent myIntent = new Intent(ChronometerMenuActivity.this, AudioGridActivity.class);
                 ChronometerMenuActivity.this.startActivity(myIntent);
             }
         });
@@ -38,7 +38,7 @@ public class ChronometerMenuActivity extends AppCompatActivity {
         animation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Agenda", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Agenda", Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(ChronometerMenuActivity.this, ChronometerAnimationActivity.class);
                 ChronometerMenuActivity.this.startActivity(myIntent);
             }
@@ -47,8 +47,8 @@ public class ChronometerMenuActivity extends AppCompatActivity {
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Ricorda", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(ChronometerMenuActivity.this, ChronometerVideoActivity.class);
+                //Toast.makeText(getApplicationContext(), "Ricorda", Toast.LENGTH_LONG).show();
+                Intent myIntent = new Intent(ChronometerMenuActivity.this, VideoGridActivity.class);
                 ChronometerMenuActivity.this.startActivity(myIntent);
             }
         });
@@ -56,7 +56,7 @@ public class ChronometerMenuActivity extends AppCompatActivity {
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Back", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Back", Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(ChronometerMenuActivity.this, HomeActivity.class);
                 ChronometerMenuActivity.this.startActivity(myIntent);
             }

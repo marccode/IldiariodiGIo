@@ -68,6 +68,15 @@ public class VideoGridActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton btnBack = (ImageButton) findViewById(R.id.imageButton_back);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                finish();
+            }
+        });
+
         video_manager = new MediaManager();
         all_videos = video_manager.getAllVideos();
         if (all_videos == null) {
