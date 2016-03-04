@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.polimi.deib.ildiariodigio.DiarioMenuActivity">
+
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/button_back"
+        android:background="#00000000"/>
+
+    <TextView
+        android:id="@+id/diario_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Cosa vuoi fare?"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
+    <LinearLayout
+        android:layout_below="@id/diario_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="20dip">
+
+        <Button
+            android:id="@+id/access_camera"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="200dip"
+            android:layout_gravity="center_vertical"
+            android:backgroundTint="#9FA8DA"
+            android:text="Scatta una foto"
+            android:gravity="bottom|center_horizontal"/>
+
+
+
+        <Button
+            android:id="@+id/access_photos"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="200dip"
+            android:layout_gravity="center_vertical"
+            android:backgroundTint="#9FA8DA"
+            android:text="Guarda le foto"
+            android:gravity="bottom|center_horizontal"/>
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
