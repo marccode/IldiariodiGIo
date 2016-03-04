@@ -11,7 +11,10 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,10 +33,19 @@ public class AudioGridActivity extends AppCompatActivity {
     private MediaManager song_manager;
     private ArrayList<HashMap<String, String>> all_songs = new ArrayList<HashMap<String, String>>();
 
+    ArrayList<String> times = new ArrayList<String>();
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> paths = new ArrayList<String>();
+
     private String title_selected;
     private String duration_selected;
     private String path_selected;
+
+    private int menu_selected;
     private  int selected;
+
+    private GridView grid;
+    private GridAdapter ga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +53,7 @@ public class AudioGridActivity extends AppCompatActivity {
         setContentView(R.layout.activity_audio_grid);
 
         selected = -1;
+        menu_selected = -1;
 
         TextView tv = (TextView) findViewById(R.id.textview_activity_title);
         Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
@@ -81,8 +94,10 @@ public class AudioGridActivity extends AppCompatActivity {
             Log.e("TAG", "all_songs is NOT NULL");
         }
 
-        GridView grid = (GridView) findViewById(R.id.grid_audios);
-        grid.setAdapter(new GridAdapter(this));
+        grid = (GridView) findViewById(R.id.grid_audios);
+        ga = new GridAdapter(this);
+        grid.setAdapter(ga);
+        registerForContextMenu(grid);
 
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -97,11 +112,6 @@ public class AudioGridActivity extends AppCompatActivity {
 
         private Context mContext;
         private LayoutInflater inflater = null;
-
-        ArrayList<String> times = new ArrayList<String>();
-        ArrayList<String> names = new ArrayList<String>();
-        ArrayList<String> paths = new ArrayList<String>();
-
 
         public GridAdapter(Context c) {
             mContext = c;
@@ -129,6 +139,7 @@ public class AudioGridActivity extends AppCompatActivity {
 
             if (position < names.size()) {
                 rowView = inflater.inflate(R.layout.audio_button_layout, null);
+
                 TextView time_textView = (TextView) rowView.findViewById(R.id.audio_button_time_textView);
                 TextView name_textView = (TextView) rowView.findViewById(R.id.audio_button_name_textView);
 
@@ -168,7 +179,7 @@ public class AudioGridActivity extends AppCompatActivity {
                     }
                 });
 
-
+                /*
                 rowView.setOnLongClickListener(new View.OnLongClickListener() {
 
                     public boolean onLongClick(View v) {
@@ -204,6 +215,7 @@ public class AudioGridActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+                */
             }
             else {
 
@@ -308,4 +320,71 @@ public class AudioGridActivity extends AppCompatActivity {
             return finalTimerString;
         }
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        GridView gv = (GridView) v;
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        menu_selected = info.position;
+        if (menu_selected <= names.size()) {
+            inflater.inflate(R.menu.audio_options_menu, menu);
+        }
+        else {
+            menu.close();
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.change_name:
+                // your first action code
+                return true;
+            case R.id.delete:
+                //(getView);
+                // your second action code
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void changeNameAudio(View v) {
+
+    }
+
+    private void deleteAudio(View v) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(AudioGridActivity.this);
+        alert.setTitle("Eliminare canzone");
+        alert.setMessage("Vuoi eliminare la canzone \"" + names.get(menu_selected) + "\"?");
+        alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DBAdapter db = new DBAdapter(getApplicationContext());
+                db.open();
+                db.deleteSong(names.get(menu_selected));
+                db.close();
+                names.remove(menu_selected);
+                times.remove(menu_selected);
+                paths.remove(menu_selected);
+                dialog.dismiss();
+                selected = -1;
+                ga.notifyDataSetChanged();
+
+            }
+        });
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+    }
+
 }

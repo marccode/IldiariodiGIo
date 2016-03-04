@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/change_name"
+        android:title="Modificare il nome della canzone" />
+    <item android:id="@+id/delete"
+        android:title="Eliminare la canzone" />
+</menu>

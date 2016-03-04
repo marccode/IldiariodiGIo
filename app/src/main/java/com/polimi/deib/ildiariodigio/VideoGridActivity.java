@@ -264,7 +264,7 @@ public class VideoGridActivity extends AppCompatActivity {
                                         // Add to Database
                                         DBAdapter db = new DBAdapter(mContext);
                                         db.open();
-                                        db.addAudio(title, path, duration);
+                                        db.addVideo(title, path, duration);
                                         db.close();
                                         names.add(title);
                                         times.add(millisecondsToString(duration));

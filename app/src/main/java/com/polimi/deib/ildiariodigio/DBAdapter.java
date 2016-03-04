@@ -51,6 +51,17 @@ public class DBAdapter {
             //db.execSQL(DATABASE_CREATE);
             db.execSQL("create table if not exists songs (id integer primary key autoincrement, title VARCHAR not null, path VARCHAR, duration integer)");
             db.execSQL("create table if not exists videos (id integer primary key autoincrement, title VARCHAR not null, path VARCHAR, duration integer)");
+            db.execSQL("create table if not exists profiles (id integer primary key autoincrement, name VARCHAR not null, type integer)");
+            db.execSQL("create table if not exists diario (id integer primary key autoincrement, path VARCHAR not null, name VARCHAR, description VARCHAR, date VARCHAR)");
+
+            // INIT TABLE PROFILES
+            ContentValues initialValues = new ContentValues();
+            initialValues.put("name", "Nome dil bambino");
+            initialValues.put("type", 0);
+            db.insert("profiles", null, initialValues);
+            initialValues.put("name", "Nome dil genitore");
+            initialValues.put("type", 1);
+            db.insert("profiles", null, initialValues);
         }
 
         @Override
@@ -120,7 +131,7 @@ public class DBAdapter {
 
     // <SONGS>
     public Cursor getAllSongs() {
-        return  db.query("songs", new String[] {"title", "path", "duration"}, null, null, null, null, null);
+        return  db.query("songs", new String[]{"title", "path", "duration"}, null, null, null, null, null);
     }
 
     public long addSong(String title, String path, int duration) {
@@ -135,14 +146,23 @@ public class DBAdapter {
     public boolean deleteSong(String title) {
         return db.delete("songs",  "title = \"" + title + "\"", null) > 0;
     }
+
+    public void changeSongTitle(String old_title, String new_title) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("title", new_title);
+        db.update("profiles", newValues, "title = " + old_title, null);
+    }
     // </SONGS>
+
+
+
 
     // <VIDEOS>
     public Cursor getAllVideos() {
-        return  db.query("videos", new String[] {"title", "path", "duration"}, null, null, null, null, null);
+        return  db.query("videos", new String[]{"title", "path", "duration"}, null, null, null, null, null);
     }
 
-    public long addAudio(String title, String path, int duration) {
+    public long addVideo(String title, String path, int duration) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("title", title);
         initialValues.put("path", path);
@@ -154,5 +174,83 @@ public class DBAdapter {
     public boolean deleteVideo(String title) {
         return db.delete("videos",  "title = \"" + title + "\"", null) > 0;
     }
+
+    public void changeVideoTitle(String old_title, String new_title) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("title", new_title);
+        db.update("profiles", newValues, "title = " + old_title, null);
+    }
     // </VIDEOS>
+
+
+
+
+    // <PROFILES>
+    public void setChildrenName(String name) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("name", name);
+        db.update("profiles", newValues, "type = 0", null);
+    }
+
+    public void setParentName(String name) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("name", name);
+        db.update("profiles", newValues, "type = 1", null);
+    }
+
+    public String getChildrenName() {
+        String query ="SELECT name FROM names WHERE type = 0";
+        Cursor c = db.rawQuery(query, null);
+        return c.getString(0);
+    }
+
+    public String getParentName() {
+        String query ="SELECT name FROM names WHERE type = 1";
+        Cursor c = db.rawQuery(query, null);
+        String result = "null";
+        if (c != null) {
+            result = c.getString(0);
+        }
+        return result;
+    }
+    // </PROFILES>
+
+
+
+
+    // <DIARIO>
+    public void addPhoto(String path, String name, String description, String date) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("path", path);
+        initialValues.put("name", name);
+        initialValues.put("description", description);
+        initialValues.put("date", date);
+        db.insert("diario", null, initialValues);
+    }
+
+    public void deletePhoto(int id) {
+        db.delete("diario", "id = " + id, null);
+    }
+
+    public void updatePhoto(int id, String path, String name, String description, String date) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("path", path);
+        newValues.put("name", name);
+        newValues.put("description", description);
+        newValues.put("date", date);
+        db.update("profile", newValues, "id = " + id, null);
+    }
+
+    public Cursor getPhoto(int id) {
+        String query ="SELECT * FROM names WHERE id = " + id;
+        Cursor c = db.rawQuery(query, null);
+        return c;
+    }
+
+    public Cursor getAllPhotos() {
+        String query ="SELECT * FROM names";
+        Cursor c = db.rawQuery(query, null);
+        return c;
+    }
+    // </DIARIO>
 }
