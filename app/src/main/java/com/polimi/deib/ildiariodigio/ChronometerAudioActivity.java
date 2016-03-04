@@ -34,18 +34,10 @@ public class ChronometerAudioActivity extends Activity {
 
     private ImageButton btnPlay;
     private ImageButton btnBack;
-    //private ImageButton btnForward;
-    //private ImageButton btnBackward;
-    //private ImageButton btnNext;
-    //private ImageButton btnPrevious;
-    //private ImageButton btnPlaylist;
-    //private ImageButton btnRepeat;
-    //private ImageButton btnShuffle;
-    //private SeekBar songProgressBar;
+
     private TextView songTitle;
     private TextView songCurrentDurationLabel;
     private TextView min_textview;
-    //private TextView songTotalDurationLabel;
     // Media Player
     private MediaPlayer mp;
     // Handler to update UI timer, progress bar etc,.

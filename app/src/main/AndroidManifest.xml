@@ -23,9 +23,9 @@
         <activity android:name=".FirstLoginActivity" />
         <activity android:name=".ModificaActivity"/>
         <activity android:name=".ChronometerAudioActivity" />
-        <activity android:name=".TestActivity" />
         <activity android:name=".AudioGridActivity" />
         <activity android:name=".ChronometerMenuActivity" />
+        <activity android:name=".AnimationSetTimeActivity" />
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -37,7 +37,7 @@
         <activity android:name=".VideoGridActivity" />
         <activity android:name=".ChronometerVideoActivity" />
         <activity android:name=".ChronometerAnimationActivity" />
-        <activity android:name=".AnimationSetUpActivity" />
+        <activity android:name=".AnimationSetTypeActivity" />
         <activity android:name=".BravoActivity"></activity>
     </application>
 

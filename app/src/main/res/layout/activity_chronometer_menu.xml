@@ -1,73 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:baselineAligned="false"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.polimi.deib.ildiariodigio.ChronometerMenuActivity">
+    android:layout_width="match_parent"
+    android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/imageButton_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_back"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"/>
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/button_back"
+        android:background="#00000000"/>
 
-        <ImageView
-            android:id="@+id/text_menu_chronometer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/imageButton_back"
-            android:src="@drawable/text_menu_chronometer"/>
+    <TextView
+        android:id="@+id/textView_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:gravity="center_horizontal"
+        android:text="Con cosa contiamo\n il tempo?" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:baselineAligned="false"
-            android:paddingBottom="@dimen/activity_vertical_margin"
             android:orientation="vertical"
-            android:layout_below = "@+id/text_menu_chronometer">
+            android:layout_below="@id/textView_title"
+            android:layout_marginTop="35dip"
+            android:layout_centerHorizontal="true">
 
-            <RelativeLayout
+            <Button
+                android:id="@+id/button_animation"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_marginBottom="10dip"
+                android:drawableRight="@android:drawable/btn_star_big_on"
+                android:background="@color/orange"
+                android:text="Animazione"/>
 
-                <Button
-                    android:id="@+id/button_animation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/button_audio"
-                    android:text="Animazione"/>
+            <Button
+                android:id="@+id/button_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_marginBottom="10dip"
+                android:drawableRight="@android:drawable/btn_star_big_on"
+                android:background="@color/orange"
+                android:text="Audio"/>
 
-                <Button
-                    android:id="@+id/button_audio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="Audio"/>
-
-                <Button
-                    android:id="@+id/button_video"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/button_audio"
-                    android:text="I mei video"/>
-
-            </RelativeLayout>
-
+            <Button
+                android:id="@+id/button_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_marginBottom="10dip"
+                android:drawableRight="@android:drawable/btn_star_big_on"
+                android:background="@color/orange"
+                android:text="I mei video"/>
 
         </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
 
 

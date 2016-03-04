@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AnimationSetTimeActivity"
+    android:clickable="true"
+    android:focusableInTouchMode="true" >
+
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/button_back"
+        android:background="#00000000"/>
+
+    <TextView
+        android:id="@+id/textview_activity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:text="Quanto tempo?"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
+    <com.polimi.deib.ildiariodigio.CountDownInputView
+        android:id="@+id/countdown_input"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/textView_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/countdown_input"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp"
+        android:layout_marginTop="30dp"
+        android:text="MIN"/>
+
+    <ImageButton
+        android:id="@+id/imageButton_next"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/button_next"
+        android:background="#00000000"/>
+
+</RelativeLayout>

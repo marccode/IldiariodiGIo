@@ -43,7 +43,7 @@ public class DiarioMenuActivity extends AppCompatActivity {
         guarda_foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DiarioMenuActivity.this, DiarioGridActivity.class);
+                Intent intent = new Intent(DiarioMenuActivity.this, DiarioMenuActivity.class);
                 DiarioMenuActivity.this.startActivity(intent);
             }
         });

@@ -22,7 +22,12 @@ public class BravoActivity extends AppCompatActivity {
                 Intent i = getIntent();
                 switch(i.getStringExtra("type")) {
                     case "animation":
-
+                        String animation = i.getStringExtra("animation");
+                        int duration= i.getIntExtra("duration", 0);
+                        Intent intentAnimation = new Intent(BravoActivity.this, ChronometerAnimationActivity.class);
+                        intentAnimation.putExtra("animation", animation);
+                        intentAnimation.putExtra("duration", duration);
+                        BravoActivity.this.startActivity(intentAnimation);
                         break;
 
                     case "song":

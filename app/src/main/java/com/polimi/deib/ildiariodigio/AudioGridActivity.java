@@ -116,7 +116,7 @@ public class AudioGridActivity extends AppCompatActivity {
             while (!cursor.isAfterLast()) {
                 names.add(cursor.getString(0));
                 paths.add(cursor.getString(1));
-                times.add(miliseconds_to_string(cursor.getInt(2)));
+                times.add(millisecondsToString(cursor.getInt(2)));
                 cursor.moveToNext();
             }
             cursor.close();
@@ -256,7 +256,7 @@ public class AudioGridActivity extends AppCompatActivity {
                                         db.addSong(title, path, duration);
                                         db.close();
                                         names.add(title);
-                                        times.add(miliseconds_to_string(duration));
+                                        times.add(millisecondsToString(duration));
                                         paths.add(path);
                                         notifyDataSetChanged();
                                     }
@@ -283,7 +283,7 @@ public class AudioGridActivity extends AppCompatActivity {
             return position;
         }
 
-        private String miliseconds_to_string(int milliseconds) {
+        private String millisecondsToString(int milliseconds) {
             String finalTimerString = "";
             String secondsString = "";
 

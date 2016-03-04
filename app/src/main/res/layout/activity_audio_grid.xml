@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -27,18 +26,18 @@
         android:layout_marginTop="40dp" />
 
 
-        <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/grid_audios"
-            android:layout_below="@id/textview_activity_title"
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/grid_audios"
+        android:layout_below="@id/textview_activity_title"
 
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:verticalSpacing="10dp"
-            android:horizontalSpacing="10dp"
-            android:numColumns="4"
-            android:layout_marginBottom="70dp"
-            android:layout_marginTop="35dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:numColumns="4"
+        android:layout_marginBottom="70dp"
+        android:layout_marginTop="35dp"/>
 
 
     <ImageButton
