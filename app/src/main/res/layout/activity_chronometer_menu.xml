@@ -40,14 +40,17 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:paddingLeft="80dp"
+                android:paddingRight="80dp">
 
                 <Button
                     android:id="@+id/button_animation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/button_audio"
-                    android:text="Animazione"/>
+                    android:text="Animazione"
+                   />
 
                 <Button
                     android:id="@+id/button_audio"
