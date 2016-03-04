@@ -14,10 +14,10 @@ public class FirstLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
+
         setContentView(R.layout.activity_first_login);
 
-        next_button = (ImageButton)findViewById(R.id.button_enter);
+        next_button = (ImageButton)findViewById(R.id.button_modifica);
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -26,6 +26,6 @@ public class FirstLoginActivity extends AppCompatActivity {
                 FirstLoginActivity.this.startActivity(myIntent);
             }
         });
-        */
+
     }
 }

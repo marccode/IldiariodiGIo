@@ -72,7 +72,8 @@
         android:inputType="textCapWords"
         android:layout_below="@+id/imageButton_upload_kid"
         android:layout_alignLeft="@+id/imageButton_upload_kid"
-        android:layout_alignStart="@+id/imageButton_upload_kid"/>
+        android:layout_alignStart="@+id/imageButton_upload_kid"
+        android:hint="Nome bambino"/>
 
     <EditText
         android:id="@+id/nome_bambino"
@@ -83,6 +84,7 @@
 
         android:layout_below="@+id/imageButton_upload_kid"
         android:layout_alignLeft="@+id/imageButton_upload_parent"
-        android:layout_alignStart="@+id/imageButton_upload_parent" />
+        android:layout_alignStart="@+id/imageButton_upload_parent"
+        android:hint="Nome genitore"/>
 
 </RelativeLayout>

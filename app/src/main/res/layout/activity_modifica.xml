@@ -76,7 +76,8 @@
 
         android:layout_below="@+id/imageButton_upload_kid"
         android:layout_alignLeft="@+id/imageButton_upload_parent"
-        android:layout_alignStart="@+id/imageButton_upload_parent" />
+        android:layout_alignStart="@+id/imageButton_upload_parent"
+        android:hint="Nome genitore"/>
 
     <EditText
         android:id="@+id/nome_genitori"
@@ -86,7 +87,8 @@
         android:inputType="textCapWords"
         android:layout_below="@+id/imageButton_upload_kid"
         android:layout_alignLeft="@+id/imageButton_upload_kid"
-        android:layout_alignStart="@+id/imageButton_upload_kid" />
+        android:layout_alignStart="@+id/imageButton_upload_kid"
+        android:hint="Nome bambino"/>
 
 
 </RelativeLayout>

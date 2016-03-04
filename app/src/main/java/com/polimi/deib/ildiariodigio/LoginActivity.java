@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         parent_button = (ImageButton)findViewById(R.id.imageButton_parent);
-        modifica_button = (ImageButton)findViewById(R.id.button_enter);
+        modifica_button = (ImageButton)findViewById(R.id.button_modify);
 
         parent_button.setOnClickListener(new View.OnClickListener() {
             @Override
