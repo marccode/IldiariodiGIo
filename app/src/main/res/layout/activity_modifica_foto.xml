@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/button_back"
+        android:background="#00000000"/>
+
+    <TextView
+        android:id="@+id/textview_activity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:text="Cosa ti è piaciuto\n oggi?"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
+    <LinearLayout
+        android:id="@+id/modifica_foto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginTop="35dp"
+        android:layout_below="@id/textview_activity_title"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/foto_modify"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:src="#9FA8DA"/>
+
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/imageButton_enter"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/button_enter"
+        android:background="#00000000"/>
+
+</RelativeLayout>
