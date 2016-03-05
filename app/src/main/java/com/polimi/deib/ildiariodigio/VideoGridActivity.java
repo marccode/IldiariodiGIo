@@ -49,6 +49,7 @@ public class VideoGridActivity extends AppCompatActivity {
     private GridView grid;
     private GridAdapter ga;
 
+    ArrayList<Integer> id = new ArrayList<Integer>();
     ArrayList<String> times = new ArrayList<String>();
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> paths = new ArrayList<String>();
@@ -92,7 +93,7 @@ public class VideoGridActivity extends AppCompatActivity {
             }
         });
 
-        video_manager = new MediaManager();
+        video_manager = new MediaManager(getApplicationContext());
         all_videos = video_manager.getAllVideos();
         if (all_videos == null) {
             Log.e("TAG", "all_songs is NULL");
@@ -137,9 +138,10 @@ public class VideoGridActivity extends AppCompatActivity {
                 cursor.moveToFirst();
             }
             while (!cursor.isAfterLast()) {
-                names.add(cursor.getString(0));
-                paths.add(cursor.getString(1));
-                times.add(millisecondsToString(cursor.getInt(2)));
+                id.add(cursor.getInt(0));
+                names.add(cursor.getString(1));
+                paths.add(cursor.getString(2));
+                times.add(millisecondsToString(cursor.getInt(3)));
                 cursor.moveToNext();
             }
             cursor.close();
@@ -177,7 +179,6 @@ public class VideoGridActivity extends AppCompatActivity {
                 }
             }
             else {
-
                 rowView = inflater.inflate(R.layout.add_item_layout, null);
                 RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_add_audio_button);
                 rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
@@ -218,19 +219,18 @@ public class VideoGridActivity extends AppCompatActivity {
                                         mmr.setDataSource(getApplicationContext(), uri);
                                         int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 
+                                        // Add to Database
+                                        DBAdapter db = new DBAdapter(mContext);
+                                        db.open();
+                                        id.add(db.addVideo(title, path, duration));
+                                        db.close();
                                         names.add(title);
                                         times.add(millisecondsToString(duration));
                                         paths.add(path);
 
-                                        // Add to Database
-                                        DBAdapter db = new DBAdapter(mContext);
-                                        db.open();
-                                        db.addVideo(title, path, duration);
-                                        db.close();
-
                                         // OFFER TO CHANGE NAME
-                                        menu_selected = -1;
-                                        changeTitleAudioVideo();
+                                        menu_selected = names.size() - 1;
+                                        changeTitleVideo();
 
                                         notifyDataSetChanged();
                                     }
@@ -266,7 +266,7 @@ public class VideoGridActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         menu_selected = info.position;
         if (menu_selected <= names.size()) {
-            inflater.inflate(R.menu.audio_options_menu, menu);
+            inflater.inflate(R.menu.video_options_menu, menu);
         }
         else {
             menu.close();
@@ -277,7 +277,7 @@ public class VideoGridActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.change_name:
-                changeTitleAudioVideo();
+                changeTitleVideo();
                 // your first action code
                 return true;
             case R.id.delete:
@@ -289,9 +289,9 @@ public class VideoGridActivity extends AppCompatActivity {
         }
     }
 
-    private void changeTitleAudioVideo() {
+    private void changeTitleVideo() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Modifica il nome della canzone");
+        dialog.setTitle("Modifica il nome del video");
         dialog.setMessage("Introdurre il nuovo nome");
 
         // Use an EditText view to get user input.
@@ -306,7 +306,7 @@ public class VideoGridActivity extends AppCompatActivity {
                 String new_name = input.getText().toString();
                 DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
-                db.changeSongTitle(names.get(menu_selected), new_name);
+                db.changeVideoTitle(id.get(menu_selected), new_name);
                 names.set(menu_selected, new_name);
                 menu_selected = -1;
                 ga.notifyDataSetChanged();
@@ -336,8 +336,9 @@ public class VideoGridActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
-                db.deleteVideo(names.get(menu_selected));
+                db.deleteVideo(id.get(menu_selected));
                 db.close();
+                id.remove(menu_selected);
                 names.remove(menu_selected);
                 times.remove(menu_selected);
                 paths.remove(menu_selected);

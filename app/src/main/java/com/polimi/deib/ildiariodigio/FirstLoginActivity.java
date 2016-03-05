@@ -48,6 +48,8 @@ public class FirstLoginActivity extends AppCompatActivity {
                 else
                     db.setParentName("Nome genitore");
 
+                db.close();
+
                 Toast.makeText(getApplicationContext(), "Entering the menu to choose", Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(FirstLoginActivity.this, LoginActivity.class);
                 FirstLoginActivity.this.startActivity(myIntent);

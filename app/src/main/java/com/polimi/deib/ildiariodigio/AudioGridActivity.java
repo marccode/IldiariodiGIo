@@ -35,6 +35,7 @@ public class AudioGridActivity extends AppCompatActivity {
     private MediaManager song_manager;
     private ArrayList<HashMap<String, String>> all_songs = new ArrayList<HashMap<String, String>>();
 
+    ArrayList<Integer> id = new ArrayList<Integer>();
     ArrayList<String> times = new ArrayList<String>();
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> paths = new ArrayList<String>();
@@ -89,7 +90,7 @@ public class AudioGridActivity extends AppCompatActivity {
         });
 
 
-        song_manager = new MediaManager();
+        song_manager = new MediaManager(getApplicationContext());
         all_songs = song_manager.getAllSongs();
 
         grid = (GridView) findViewById(R.id.grid_audios);
@@ -129,9 +130,10 @@ public class AudioGridActivity extends AppCompatActivity {
                 cursor.moveToFirst();
             }
             while (!cursor.isAfterLast()) {
-                names.add(cursor.getString(0));
-                paths.add(cursor.getString(1));
-                times.add(millisecondsToString(cursor.getInt(2)));
+                id.add(cursor.getInt(0));
+                names.add(cursor.getString(1));
+                paths.add(cursor.getString(2));
+                times.add(millisecondsToString(cursor.getInt(3)));
                 cursor.moveToNext();
             }
             cursor.close();
@@ -212,18 +214,17 @@ public class AudioGridActivity extends AppCompatActivity {
                                         mmr.setDataSource(getApplicationContext(), uri);
                                         int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 
+                                        // Add to Database
+                                        DBAdapter db = new DBAdapter(mContext);
+                                        db.open();
+                                        id.add(db.addSong(title, path, duration));
+                                        db.close();
                                         names.add(title);
                                         times.add(millisecondsToString(duration));
                                         paths.add(path);
 
-                                        // Add to Database
-                                        DBAdapter db = new DBAdapter(mContext);
-                                        db.open();
-                                        db.addSong(title, path, duration);
-                                        db.close();
-
                                         // OFFER TO CHANGE NAME:
-                                        menu_selected = position;
+                                        menu_selected = names.size() - 1;
                                         changeTitleAudio();
 
                                         notifyDataSetChanged();
@@ -303,7 +304,7 @@ public class AudioGridActivity extends AppCompatActivity {
                 String new_name = input.getText().toString();
                 DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
-                db.changeSongTitle(names.get(menu_selected), new_name);
+                db.changeSongTitle(id.get(menu_selected), new_name);
                 names.set(menu_selected, new_name);
                 menu_selected = -1;
                 ga.notifyDataSetChanged();
@@ -333,8 +334,9 @@ public class AudioGridActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
-                db.deleteSong(names.get(menu_selected));
+                db.deleteSong(id.get(menu_selected));
                 db.close();
+                id.remove(menu_selected);
                 names.remove(menu_selected);
                 times.remove(menu_selected);
                 paths.remove(menu_selected);

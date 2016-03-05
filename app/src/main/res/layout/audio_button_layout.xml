@@ -23,6 +23,8 @@
         android:layout_below="@id/audio_button_time_textView"
         android:gravity="center"
         android:layout_marginTop="5dip"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:ellipsize="end"
+        android:singleLine="true" />
 
 </RelativeLayout>

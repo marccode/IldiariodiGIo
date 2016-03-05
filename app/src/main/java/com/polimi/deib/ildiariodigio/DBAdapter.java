@@ -131,26 +131,25 @@ public class DBAdapter {
 
     // <SONGS>
     public Cursor getAllSongs() {
-        return  db.query("songs", new String[]{"title", "path", "duration"}, null, null, null, null, null);
+        return  db.query("songs", new String[]{"id", "title", "path", "duration"}, null, null, null, null, null);
     }
 
-    public long addSong(String title, String path, int duration) {
+    public int addSong(String title, String path, int duration) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("title", title);
         initialValues.put("path", path);
         initialValues.put("duration", duration);
-
-        return db.insert("songs", null, initialValues);
+        return (int)db.insert("songs", null, initialValues);
     }
 
-    public boolean deleteSong(String title) {
-        return db.delete("songs",  "title = \"" + title + "\"", null) > 0;
+    public boolean deleteSong(int id) {
+        return db.delete("songs",  "id = " + id, null) > 0;
     }
 
-    public void changeSongTitle(String old_title, String new_title) {
+    public void changeSongTitle(int id, String new_title) {
         ContentValues newValues = new ContentValues();
         newValues.put("title", new_title);
-        db.update("songs", newValues, "title = \"" + old_title + "\"", null);
+        db.update("songs", newValues, "id = " + id, null);
     }
     // </SONGS>
 
@@ -159,26 +158,26 @@ public class DBAdapter {
 
     // <VIDEOS>
     public Cursor getAllVideos() {
-        return  db.query("videos", new String[]{"title", "path", "duration"}, null, null, null, null, null);
+        return  db.query("videos", new String[]{"id", "title", "path", "duration"}, null, null, null, null, null);
     }
 
-    public long addVideo(String title, String path, int duration) {
+    public int addVideo(String title, String path, int duration) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("title", title);
         initialValues.put("path", path);
         initialValues.put("duration", duration);
 
-        return db.insert("videos", null, initialValues);
+        return (int)db.insert("videos", null, initialValues);
     }
 
-    public boolean deleteVideo(String title) {
-        return db.delete("videos",  "title = \"" + title + "\"", null) > 0;
+    public boolean deleteVideo(int id) {
+        return db.delete("videos",  "id = " + id, null) > 0;
     }
 
-    public void changeVideoTitle(String old_title, String new_title) {
+    public void changeVideoTitle(int id, String new_title) {
         ContentValues newValues = new ContentValues();
         newValues.put("title", new_title);
-        db.update("profiles", newValues, "title = \"" + old_title + "\"", null);
+        db.update("videos", newValues, "id = " + id, null);
     }
     // </VIDEOS>
 

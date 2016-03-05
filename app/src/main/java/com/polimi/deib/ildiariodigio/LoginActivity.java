@@ -22,6 +22,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // <TEMPORAL SOLO MIENTRAS NO FUNCIONE ESTA ACTIVITY>
+        Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
+        LoginActivity.this.startActivity(myIntent);
+        finish();
+        // </ TEMPORAL>
+
+
         db = new DBAdapter(getApplicationContext());
         db.open();
         nome_bambino = (EditText) findViewById(R.id.nome_bambino);
