@@ -73,7 +73,8 @@
         android:layout_below="@+id/imageButton_upload_kid"
         android:layout_alignLeft="@+id/imageButton_upload_kid"
         android:layout_alignStart="@+id/imageButton_upload_kid"
-        android:hint="Nome bambino"/>
+        android:hint="Nome bambino"
+        android:textColorHint="#a4a4a4" />
 
     <EditText
         android:id="@+id/nome_bambino"
@@ -85,6 +86,8 @@
         android:layout_below="@+id/imageButton_upload_kid"
         android:layout_alignLeft="@+id/imageButton_upload_parent"
         android:layout_alignStart="@+id/imageButton_upload_parent"
-        android:hint="Nome genitore"/>
+        android:hint="Nome genitore"
+        android:textColor="#ffffff"
+        android:textColorHint="#a4a4a4" />
 
 </RelativeLayout>

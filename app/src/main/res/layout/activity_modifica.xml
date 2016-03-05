@@ -35,60 +35,118 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout"
+        android:layout_toStartOf="@+id/textView3"
+        android:weightSum="20"
+        android:layout_toLeftOf="@+id/textView3"
 
-            <ImageButton
-                android:id="@+id/imageButton_upload_parent"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:background="@drawable/upload_photo_parent"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:layout_above="@+id/nome_bambino"
-                android:layout_toRightOf="@+id/textView3"
-                android:layout_toEndOf="@+id/textView3"
-                android:layout_marginLeft="52dp"
-                android:layout_marginStart="52dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="     "
-                android:id="@+id/textView3" />
-
-            <ImageButton
-                android:id="@+id/imageButton_upload_kid"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:background="@drawable/upload_photo_kid"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/button_modifica"
-                android:layout_toStartOf="@+id/button_modifica" />
+        android:layout_alignTop="@+id/title_modify_profile">
 
 
-    <EditText
-        android:id="@+id/nome_bambino"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:background="@drawable/text_field"
-        android:inputType="textCapWords"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/textView6"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="10"
+            android:visibility="invisible" />
 
-        android:layout_below="@+id/imageButton_upload_kid"
-        android:layout_alignLeft="@+id/imageButton_upload_parent"
-        android:layout_alignStart="@+id/imageButton_upload_parent"
-        android:hint="Nome genitore"/>
+        <ImageButton
+            android:id="@+id/imageButton_upload_parent"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/upload_photo_parent"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:layout_weight="0.3" />
 
-    <EditText
-        android:id="@+id/nome_genitori"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:background="@drawable/text_field"
-        android:inputType="textCapWords"
-        android:layout_below="@+id/imageButton_upload_kid"
-        android:layout_alignLeft="@+id/imageButton_upload_kid"
-        android:layout_alignStart="@+id/imageButton_upload_kid"
-        android:hint="Nome bambino"/>
+        <EditText
+            android:id="@+id/EditxParent"
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:background="@drawable/text_field"
+            android:inputType="textCapWords"
+
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:layout_gravity="center"
+            android:layout_marginTop="39dp"
+            android:hint="Nome genitore"
+            android:layout_weight="0.3"
+            android:textColorHint="#a4a4a4" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView3"
+        android:weightSum="20"
+        android:layout_toRightOf="@+id/textView3"
+        android:id="@+id/linearLayout2"
+        android:layout_alignTop="@+id/title_modify_profile">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/textView7"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="10"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/imageButton_upload_kid"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@drawable/upload_photo_kid"
+            android:layout_gravity="center"
+            android:layout_weight="0.3" />
+
+        <EditText
+            android:id="@+id/EditxKid"
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:background="@drawable/text_field"
+            android:inputType="textCapWords"
+            android:contextClickable="true"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:layout_marginTop="39dp"
+            android:layout_gravity="top|center"
+            android:hint="Nome bambino"
+            android:layout_weight="0.3"
+            android:textColorHint="#a4a4a4" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="2dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/textView3"
+        android:layout_alignTop="@+id/title_modify_profile"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

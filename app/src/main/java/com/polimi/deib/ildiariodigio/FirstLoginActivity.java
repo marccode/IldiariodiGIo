@@ -13,8 +13,8 @@ public class FirstLoginActivity extends AppCompatActivity {
 
     ImageButton next_button;
     DBAdapter db;
-    EditText tvNomeBambino;
-    EditText tvNomeGenitori;
+    EditText etNomeBambino;
+    EditText etNomeGenitori;
     String nome_bambino;
     String nome_genitore;
     @Override
@@ -23,20 +23,21 @@ public class FirstLoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_first_login);
 
-        tvNomeBambino = (EditText) findViewById(R.id.nome_bambino);
-        tvNomeGenitori = (EditText) findViewById(R.id.nome_genitori);
+        etNomeBambino = (EditText) findViewById(R.id.nome_bambino);
+        etNomeGenitori = (EditText) findViewById(R.id.nome_genitori);
 
 
         db = new DBAdapter(getApplicationContext());
-
+        db.open();
         next_button = (ImageButton)findViewById(R.id.button_modifica);
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                nome_bambino = tvNomeBambino.getText().toString();
-                nome_genitore = tvNomeGenitori.getText().toString();
-                db.open();
+                nome_bambino = etNomeBambino.getText().toString();
+                nome_genitore = etNomeGenitori.getText().toString();
+
+
 
                 if(!nome_bambino.matches(""))
                     db.setChildrenName(nome_bambino);
