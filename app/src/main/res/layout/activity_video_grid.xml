@@ -34,7 +34,7 @@
         android:layout_below="@id/textview_activity_title" >
 
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/grid_audios"
+            android:id="@+id/grid_videos"
 
             android:gravity="center"
             android:stretchMode="columnWidth"

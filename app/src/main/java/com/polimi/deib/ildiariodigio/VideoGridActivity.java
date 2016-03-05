@@ -17,12 +17,16 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -40,6 +44,14 @@ public class VideoGridActivity extends AppCompatActivity {
     private String duration_selected;
     private String path_selected;
     private  int selected;
+    private int menu_selected;
+
+    private GridView grid;
+    private GridAdapter ga;
+
+    ArrayList<String> times = new ArrayList<String>();
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> paths = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +59,7 @@ public class VideoGridActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_grid);
 
         selected = -1;
+        menu_selected = -1;
 
         TextView tv = (TextView) findViewById(R.id.textview_activity_title);
         Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
@@ -88,15 +101,23 @@ public class VideoGridActivity extends AppCompatActivity {
             Log.e("TAG", "all_songs is NOT NULL");
         }
 
-        GridView grid = (GridView) findViewById(R.id.grid_audios);
-        grid.setAdapter(new GridAdapter(this));
+        grid = (GridView) findViewById(R.id.grid_videos);
+        ga = new GridAdapter(this);
+        grid.setAdapter(ga);
+        registerForContextMenu(grid);
 
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                    long arg3) {
-                //do some stuff here on click
-            }
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                if (position == selected) {
+                    selected = -1;
+                } else {
+                    title_selected = names.get(position);
+                    duration_selected = times.get(position);
+                    path_selected = paths.get(position);
+                    selected = position;
+                }
+                ga.notifyDataSetChanged();            }
         });
     }
 
@@ -104,12 +125,6 @@ public class VideoGridActivity extends AppCompatActivity {
 
         private Context mContext;
         private LayoutInflater inflater = null;
-
-        // TINC QUE BUSCAR A LA BASE DE DADES LA DURACIÓ I NOMS DE LES CANÇONS I POSAR-HO EN ELS ARRAYS:
-        ArrayList<String> times = new ArrayList<String>();
-        ArrayList<String> names = new ArrayList<String>();
-        ArrayList<String> paths = new ArrayList<String>();
-
 
         public GridAdapter(Context c) {
             mContext = c;
@@ -151,16 +166,8 @@ public class VideoGridActivity extends AppCompatActivity {
                 name_textView.setText(names.get(position));
 
                 RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_audio_button);
-                //LayerDrawable layer = (LayerDrawable) rl.getBackground();
-                //LayerDrawable layer = (LayerDrawable) getResources().getDrawable(R.drawable.audio_button);
-                //Drawable bm = layer.getDrawable(1);
-                //Bitmap bMap = ThumbnailUtils.createVideoThumbnail(paths.get(position), MediaStore.Video.Thumbnails.MINI_KIND);
-                //Drawable d = new BitmapDrawable(getResources(), bMap);
-                //rl.setBackground(d);
 
-                //layer.setDrawableByLayerId(0, d);
                 rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_not_selected));
-                //rl.setBackground(layer);
 
                 if (position == selected) {
                     rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_selected));
@@ -168,58 +175,6 @@ public class VideoGridActivity extends AppCompatActivity {
                 else {
                     rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button_not_selected));
                 }
-
-                rowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (position == selected) {
-                            selected = -1;
-                        }
-                        else {
-                            title_selected = names.get(position);
-                            duration_selected = times.get(position);
-                            path_selected = paths.get(position);
-                            selected = position;
-                        }
-                        notifyDataSetChanged();
-                    }
-                });
-
-                rowView.setOnLongClickListener(new View.OnLongClickListener() {
-
-                    public boolean onLongClick(View v) {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(VideoGridActivity.this);
-                        alert.setTitle("Eliminare video");
-                        alert.setMessage("Vuoi eliminare il video \"" + names.get(position) + "\"?");
-                        alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                DBAdapter db = new DBAdapter(mContext);
-                                db.open();
-                                db.deleteVideo(names.get(position));
-                                db.close();
-                                names.remove(position);
-                                times.remove(position);
-                                paths.remove(position);
-                                dialog.dismiss();
-                                selected = -1;
-                                notifyDataSetChanged();
-
-                            }
-                        });
-                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        alert.show();
-                        return true;
-                    }
-                });
             }
             else {
 
@@ -263,14 +218,20 @@ public class VideoGridActivity extends AppCompatActivity {
                                         mmr.setDataSource(getApplicationContext(), uri);
                                         int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 
+                                        names.add(title);
+                                        times.add(millisecondsToString(duration));
+                                        paths.add(path);
+
                                         // Add to Database
                                         DBAdapter db = new DBAdapter(mContext);
                                         db.open();
                                         db.addVideo(title, path, duration);
                                         db.close();
-                                        names.add(title);
-                                        times.add(millisecondsToString(duration));
-                                        paths.add(path);
+
+                                        // OFFER TO CHANGE NAME
+                                        menu_selected = -1;
+                                        changeTitleAudioVideo();
+
                                         notifyDataSetChanged();
                                     }
                                 });
@@ -297,6 +258,106 @@ public class VideoGridActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        GridView gv = (GridView) v;
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        menu_selected = info.position;
+        if (menu_selected <= names.size()) {
+            inflater.inflate(R.menu.audio_options_menu, menu);
+        }
+        else {
+            menu.close();
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.change_name:
+                changeTitleAudioVideo();
+                // your first action code
+                return true;
+            case R.id.delete:
+                deleteAudio();
+                // your second action code
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void changeTitleAudioVideo() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Modifica il nome della canzone");
+        dialog.setMessage("Introdurre il nuovo nome");
+
+        // Use an EditText view to get user input.
+        final EditText input = new EditText(this);
+        input.setText(names.get(menu_selected));
+        dialog.setView(input);
+
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String new_name = input.getText().toString();
+                DBAdapter db = new DBAdapter(getApplicationContext());
+                db.open();
+                db.changeSongTitle(names.get(menu_selected), new_name);
+                names.set(menu_selected, new_name);
+                menu_selected = -1;
+                ga.notifyDataSetChanged();
+                return;
+            }
+        });
+
+        dialog.setNegativeButton("Indietro", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+
+        AlertDialog b = dialog.create();
+        b.show();
+    }
+
+    private void deleteAudio() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(VideoGridActivity.this);
+        alert.setTitle("Eliminare video");
+        alert.setMessage("Vuoi eliminare il video \"" + names.get(menu_selected) + "\"?");
+        alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DBAdapter db = new DBAdapter(getApplicationContext());
+                db.open();
+                db.deleteVideo(names.get(menu_selected));
+                db.close();
+                names.remove(menu_selected);
+                times.remove(menu_selected);
+                paths.remove(menu_selected);
+                dialog.dismiss();
+                selected = -1;
+                ga.notifyDataSetChanged();
+
+            }
+        });
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+    }
+
     private String millisecondsToString(int milliseconds) {
         String finalTimerString = "";
         String secondsString = "";
@@ -321,4 +382,5 @@ public class VideoGridActivity extends AppCompatActivity {
         // return timer string
         return finalTimerString;
     }
+
 }

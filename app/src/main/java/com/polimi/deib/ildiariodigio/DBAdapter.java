@@ -199,19 +199,18 @@ public class DBAdapter {
     }
 
     public String getChildrenName() {
-        String query ="SELECT name FROM names WHERE type = 0";
+        String query ="SELECT name FROM profiles WHERE type = 0";
         Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        Log.e("TAG", "INSIDE: " + c.getString(0));
         return c.getString(0);
     }
 
     public String getParentName() {
-        String query ="SELECT name FROM names WHERE type = 1";
+        String query ="SELECT name FROM profiles WHERE type = 1";
         Cursor c = db.rawQuery(query, null);
-        String result = "null";
-        if (c != null) {
-            result = c.getString(0);
-        }
-        return result;
+        c.moveToFirst();
+        return c.getString(0);
     }
     // </PROFILES>
 
@@ -242,13 +241,13 @@ public class DBAdapter {
     }
 
     public Cursor getPhoto(int id) {
-        String query ="SELECT * FROM names WHERE id = " + id;
+        String query ="SELECT * FROM profiles WHERE id = " + id;
         Cursor c = db.rawQuery(query, null);
         return c;
     }
 
     public Cursor getAllPhotos() {
-        String query ="SELECT * FROM names";
+        String query ="SELECT * FROM profiles";
         Cursor c = db.rawQuery(query, null);
         return c;
     }

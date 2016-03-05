@@ -212,14 +212,20 @@ public class AudioGridActivity extends AppCompatActivity {
                                         mmr.setDataSource(getApplicationContext(), uri);
                                         int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 
+                                        names.add(title);
+                                        times.add(millisecondsToString(duration));
+                                        paths.add(path);
+
                                         // Add to Database
                                         DBAdapter db = new DBAdapter(mContext);
                                         db.open();
                                         db.addSong(title, path, duration);
                                         db.close();
-                                        names.add(title);
-                                        times.add(millisecondsToString(duration));
-                                        paths.add(path);
+
+                                        // OFFER TO CHANGE NAME:
+                                        menu_selected = position;
+                                        changeTitleAudio();
+
                                         notifyDataSetChanged();
                                     }
                                 });
@@ -287,6 +293,7 @@ public class AudioGridActivity extends AppCompatActivity {
 
         // Use an EditText view to get user input.
         final EditText input = new EditText(this);
+        input.setText(names.get(menu_selected));
         dialog.setView(input);
 
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -298,6 +305,7 @@ public class AudioGridActivity extends AppCompatActivity {
                 db.open();
                 db.changeSongTitle(names.get(menu_selected), new_name);
                 names.set(menu_selected, new_name);
+                menu_selected = -1;
                 ga.notifyDataSetChanged();
                 return;
             }
