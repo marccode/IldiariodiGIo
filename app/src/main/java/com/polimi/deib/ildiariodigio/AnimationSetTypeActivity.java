@@ -50,7 +50,7 @@ public class AnimationSetTypeActivity extends AppCompatActivity {
                 if (selected >= 0) {
                     Intent i = new Intent(AnimationSetTypeActivity.this, ChronometerAnimationActivity.class);
                     i.putExtra("duration", duration);
-                    i.putExtra("type", type[selected]);
+                    i.putExtra("animation_type", type[selected]);
                     AnimationSetTypeActivity.this.startActivity(i);
                 }
             }
@@ -61,7 +61,9 @@ public class AnimationSetTypeActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                finish();
+                Intent i = new Intent(AnimationSetTypeActivity.this, AnimationSetTimeActivity.class);
+                AnimationSetTypeActivity.this.startActivity(i);
+                //finish();
             }
         });
 

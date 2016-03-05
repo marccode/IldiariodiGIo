@@ -29,7 +29,7 @@
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/grid_audios"
         android:layout_below="@id/textview_activity_title"
-
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp"

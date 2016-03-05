@@ -68,7 +68,7 @@ public class ChronometerAnimationActivity extends Activity {
 
         Intent i = getIntent(); // gets the previously created intent
         initial_time = i.getIntExtra("duration", 0);
-        animation_type = i.getStringExtra("type");
+        animation_type = i.getStringExtra("animation_type");
         /* TEMPORAL SOLUTION!!! */
         //initial_time = 35000;
         //animation_type = "circle";
@@ -91,6 +91,7 @@ public class ChronometerAnimationActivity extends Activity {
         //circleProgress = (CircleRoadProgress) findViewById(R.id.circleProgressView);
         circle = (CircleProgressView) findViewById(R.id.circleView);
 
+        Log.e("TAG", Integer.toString(initial_time));
         switch (animation_type) {
             case "waves":
                 waves.setShapeType(WaveView.ShapeType.CIRCLE);
@@ -155,7 +156,9 @@ public class ChronometerAnimationActivity extends Activity {
             @Override
             public void onClick(View arg0) {
                 cdt.cancel();
-                finish();
+                Intent i = new Intent(ChronometerAnimationActivity.this, AnimationSetTypeActivity.class);
+                ChronometerAnimationActivity.this.startActivity(i);
+                //finish();
             }
         });
     }
@@ -225,7 +228,8 @@ public class ChronometerAnimationActivity extends Activity {
                 running = false;
                 remaining_time = 0;
                 Intent i = new Intent(ChronometerAnimationActivity.this, BravoActivity.class);
-                i.putExtra("type", "animation");
+                i.putExtra("chronometer_type", "animation");
+                i.putExtra("animation_type", animation_type);
                 i.putExtra("duration", initial_time);
                 ChronometerAnimationActivity.this.startActivity(i);
             }

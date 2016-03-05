@@ -73,7 +73,9 @@ public class VideoGridActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                finish();
+                Intent i = new Intent(VideoGridActivity.this, ChronometerMenuActivity.class);
+                VideoGridActivity.this.startActivity(i);
+                //finish();
             }
         });
 

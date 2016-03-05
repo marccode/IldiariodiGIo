@@ -24,7 +24,7 @@ public class DBAdapter {
 
     private static final String DATABASE_NAME = "IlDiarioDiGioDB";
     //private static final String DATABASE_TABLE = "songs";
-    private static final int DATABASE_VERSION = 4; // ¿?
+    private static final int DATABASE_VERSION = 5; // ¿?
 
     //private static final String DATABASE_CREATE =
     //        "create table if not exists songs (id integer primary key autoincrement, title VARCHAR not null, path VARCHAR, duration integer);"
@@ -150,7 +150,7 @@ public class DBAdapter {
     public void changeSongTitle(String old_title, String new_title) {
         ContentValues newValues = new ContentValues();
         newValues.put("title", new_title);
-        db.update("profiles", newValues, "title = " + old_title, null);
+        db.update("songs", newValues, "title = \"" + old_title + "\"", null);
     }
     // </SONGS>
 
@@ -178,7 +178,7 @@ public class DBAdapter {
     public void changeVideoTitle(String old_title, String new_title) {
         ContentValues newValues = new ContentValues();
         newValues.put("title", new_title);
-        db.update("profiles", newValues, "title = " + old_title, null);
+        db.update("profiles", newValues, "title = \"" + old_title + "\"", null);
     }
     // </VIDEOS>
 

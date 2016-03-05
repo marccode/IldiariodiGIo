@@ -99,7 +99,7 @@ public class ChronometerAudioActivity extends Activity {
             public void onCompletion(MediaPlayer mp) {
                 //Toast.makeText(getApplicationContext(), "CANÇO ACABADA", Toast.LENGTH_SHORT).show();            }
                 Intent i = new Intent(ChronometerAudioActivity.this, BravoActivity.class);
-                i.putExtra("type", "song");
+                i.putExtra("chronometer_type", "song");
                 i.putExtra("title", song_title);
                 i.putExtra("duration", song_duration);
                 i.putExtra("path", song_path);
@@ -147,10 +147,11 @@ public class ChronometerAudioActivity extends Activity {
 
             @Override
             public void onClick(View arg0) {
-                //Intent i = new Intent(ChronometerAudioActivity.this, AudioGridActivity.class);
-                //ChronometerAudioActivity.this.startActivity(i);
-                //mp.release();
-                finish();
+                mp.release();
+                mHandler.removeCallbacks(mUpdateTimeTask);
+                Intent i = new Intent(ChronometerAudioActivity.this, AudioGridActivity.class);
+                ChronometerAudioActivity.this.startActivity(i);
+                //finish();
             }
         });
 

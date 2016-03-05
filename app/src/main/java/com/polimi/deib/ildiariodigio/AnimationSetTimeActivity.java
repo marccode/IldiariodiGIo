@@ -63,7 +63,9 @@ public class AnimationSetTimeActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                finish();
+                Intent i = new Intent(AnimationSetTimeActivity.this, ChronometerMenuActivity.class);
+                AnimationSetTimeActivity.this.startActivity(i);
+                //finish();
             }
         });
     }

@@ -113,7 +113,7 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
             public void onCompletion(MediaPlayer mp) {
                 //Toast.makeText(getApplicationContext(), "VIDEO ACABADA", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(ChronometerVideoActivity.this, BravoActivity.class);
-                i.putExtra("type", "video");
+                i.putExtra("chronometer_type", "video");
                 i.putExtra("title", video_title);
                 i.putExtra("duration", video_duration);
                 i.putExtra("path", video_path);
@@ -161,10 +161,11 @@ public class ChronometerVideoActivity extends Activity implements SurfaceHolder.
 
             @Override
             public void onClick(View arg0) {
-                //Intent i = new Intent(ChronometerAudioActivity.this, AudioGridActivity.class);
-                //ChronometerAudioActivity.this.startActivity(i);
-                //mp.release();
-                finish();
+                mHandler.removeCallbacks(mUpdateTimeTask);
+                mp.release();
+                Intent i = new Intent(ChronometerVideoActivity.this, VideoGridActivity.class);
+                ChronometerVideoActivity.this.startActivity(i);
+                //finish();
             }
         });
 

@@ -3,6 +3,7 @@ package com.polimi.deib.ildiariodigio;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -20,12 +21,13 @@ public class BravoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = getIntent();
-                switch(i.getStringExtra("type")) {
+                switch(i.getStringExtra("chronometer_type")) {
                     case "animation":
-                        String animation = i.getStringExtra("animation");
+                        String animation = i.getStringExtra("animation_type");
+                        Log.e("TAG", animation);
                         int duration= i.getIntExtra("duration", 0);
                         Intent intentAnimation = new Intent(BravoActivity.this, ChronometerAnimationActivity.class);
-                        intentAnimation.putExtra("animation", animation);
+                        intentAnimation.putExtra("animation_type", animation);
                         intentAnimation.putExtra("duration", duration);
                         BravoActivity.this.startActivity(intentAnimation);
                         break;
