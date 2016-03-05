@@ -8,7 +8,7 @@
 
 
     <ImageView
-        android:id="@+id/title_modify_profile"
+        android:id="@+id/title_primo_acceso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/screen_modify_instructions"
-        android:layout_below="@+id/title_modify_profile"
+        android:layout_below="@+id/title_primo_acceso"
         android:layout_centerHorizontal="true" />
 
     <ImageButton
@@ -46,7 +46,7 @@
         android:weightSum="20"
         android:layout_toLeftOf="@+id/textView3"
 
-        android:layout_alignTop="@+id/title_modify_profile">
+        android:layout_alignTop="@+id/title_primo_acceso">
 
 
         <TextView
@@ -55,9 +55,6 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
             android:id="@+id/textView6"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_gravity="center_horizontal"
             android:layout_weight="10"
             android:visibility="invisible" />
@@ -69,6 +66,7 @@
             android:background="@drawable/upload_photo_parent"
             android:scaleType="fitCenter"
             android:layout_gravity="center"
+            android:adjustViewBounds="true"
             android:layout_weight="0.3" />
 
         <EditText
@@ -98,7 +96,7 @@
         android:weightSum="20"
         android:layout_toRightOf="@+id/textView3"
         android:id="@+id/linearLayout2"
-        android:layout_alignTop="@+id/title_modify_profile">
+        android:layout_alignTop="@+id/title_primo_acceso">
 
         <TextView
             android:layout_width="wrap_content"
@@ -144,7 +142,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
         android:id="@+id/textView3"
-        android:layout_alignTop="@+id/title_modify_profile"
+        android:layout_alignTop="@+id/title_primo_acceso"
         android:layout_centerHorizontal="true"
         android:visibility="invisible" />
 
