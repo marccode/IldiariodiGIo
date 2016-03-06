@@ -39,10 +39,11 @@
         android:layout_gravity="center">
 
         <ImageView
-            android:id="@+id/foto_modify"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:src="#9FA8DA"/>
+            android:layout_height="220dp"
+            android:src="@drawable/rounded_corners"
+            android:id="@+id/foto_modify"/>
+
 
         <EditText
             android:id="@+id/title_photo"
@@ -51,6 +52,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="20dp"
             android:inputType="textCapWords"
+            android:textColor="#FFFFFF"
             android:hint="Titolo della foto"
             android:textSize="20dp"
             android:textColorHint="#a4a4a4"/>
@@ -61,7 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
-            android:inputType="textCapWords"
+            android:inputType="textMultiLine"
+            android:textColor="#FFFFFF"
             android:textSize="15dp"
             android:hint="Descrivi qui cosa ti è piaciuto"
             android:textColorHint="#a4a4a4"/>
@@ -81,14 +84,6 @@
         android:src="@drawable/button_enter"
         android:background="#00000000"/>
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
-        android:layout_alignBottom="@+id/modifica_foto"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="413dp"
-        android:layout_marginStart="413dp" />
+
 
 </RelativeLayout>

@@ -43,7 +43,7 @@
         <activity android:name=".AnimationSetTypeActivity" />
         <activity android:name=".BravoActivity" />
         <activity android:name=".ModificaFotoActivity" />
-        <activity android:name=".FotoDiarioActivity"></activity>
+        <activity android:name=".FotoDiarioActivity" />
     </application>
 
 </manifest>

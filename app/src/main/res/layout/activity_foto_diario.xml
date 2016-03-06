@@ -1,12 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.polimi.deib.ildiariodigio.FotoDiarioActivity">
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/button_back"
+        android:background="#00000000"/>
+
+    <TextView
+        android:id="@+id/textview_activity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:text="Oggi"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
+    <LinearLayout
+        android:id="@+id/modifica_foto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginTop="35dp"
+        android:orientation="vertical"
+        android:layout_below="@id/textview_activity_title"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/foto_modify"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:src="#9FA8DA"/>
+
+        <TextView
+            android:id="@+id/title_photo"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:text="Titolo della foto"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:id="@+id/description_photo"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:text="Descrivi qui cosa ti è piaciuto"
+            android:textSize="15dp"/>
+
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/image_modify"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/pencil"
+        android:background="#00000000"/>
+
+
 
 </RelativeLayout>

@@ -1,6 +1,8 @@
 package com.polimi.deib.ildiariodigio;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,11 +40,32 @@ public class ModificaFotoActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         from_camera = intent.getBooleanExtra("from_camera",true);
-        file_name = intent.getStringExtra("path_name");
+
+        DBAdapter db = new DBAdapter(getApplicationContext());
+        db.open();
+
+        if(from_camera) {
+            file_name = intent.getStringExtra("path_name");
+        }
+        else {
+
+            db.getPhoto(0);//debo cambiarlo este id
+
+
+
+
+
+        }
+
+        // aqui hay q hacer el booleano para distinguir si viene de camera o de Foto diario
+
 
         File imgFile = new  File(file_name);
+
+
         if(imgFile.exists())
         {
+
             image = (ImageView)findViewById(R.id.foto_modify);
             image.setImageURI(Uri.fromFile(imgFile));
 
@@ -67,14 +90,10 @@ public class ModificaFotoActivity extends AppCompatActivity {
         et_title_photo = (EditText) findViewById(R.id.title_photo);
         et_description_photo = (EditText) findViewById(R.id.description_photo);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
         date = dateFormat.format(new Date() );
 
-
-        db = new DBAdapter(getApplicationContext());
-        db.open();
-
-        button_enter = (ImageButton)findViewById(R.id.imageButton_enter);
+        button_enter = (ImageButton) findViewById(R.id.imageButton_enter);
 
         button_enter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +102,10 @@ public class ModificaFotoActivity extends AppCompatActivity {
                 title_photo = et_title_photo.getText().toString();
                 description_photo = et_description_photo.getText().toString();
 
-                db.addPhoto(file_name, title_photo, description_photo, date);
+                DBAdapter db = new DBAdapter(getApplicationContext());
+                db.open();
 
+                db.addPhoto(file_name, title_photo, description_photo, date);
 
                 db.close();
 
@@ -95,4 +116,6 @@ public class ModificaFotoActivity extends AppCompatActivity {
         });
 
     }
+
+
 }

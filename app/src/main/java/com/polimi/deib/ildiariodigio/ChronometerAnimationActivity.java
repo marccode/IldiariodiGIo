@@ -157,7 +157,6 @@ public class ChronometerAnimationActivity extends Activity {
             public void onClick(View arg0) {
                 cdt.cancel();
                 Intent i = new Intent(ChronometerAnimationActivity.this, AnimationSetTypeActivity.class);
-                i.putExtra("duration", initial_time);
                 ChronometerAnimationActivity.this.startActivity(i);
                 //finish();
             }
