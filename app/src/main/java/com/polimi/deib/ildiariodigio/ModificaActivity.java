@@ -30,8 +30,21 @@ public class ModificaActivity extends AppCompatActivity {
     private String APP_DIRECTORY = "myPictureApp/";
     private String MEDIA_DIRECTORY = APP_DIRECTORY + "media";
     private String TEMPORAL_PICTURE_NAME="temporal.jpg";
-    private final int PHOTO_CODE=100;
+
+    private final String PARENT_PICTURE_NAME = "profile_picture_parent.jpg";
+    private final String KID_PICTURE_NAME = "profile_picture_kid.jpg";
+
+    private final int PHOTO_CODE=400;
     private final int SELECT_PICTURE=200;
+
+    public static Uri uriParent;
+    public static Uri uriKid;
+    public static Bitmap bitmapParent;
+    public static Bitmap bitmapKid;
+
+
+
+
     String path = Environment.getExternalStorageDirectory() + File.separator +
             MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
     private File file;
@@ -55,6 +68,16 @@ public class ModificaActivity extends AppCompatActivity {
 
         imageButtonParent = (ImageButton) findViewById(R.id.imageButton_upload_parent);
         imageButtonKid = (ImageButton) findViewById(R.id.imageButton_upload_kid);
+
+        if(FirstLoginActivity.bitmapParent!=null)
+            imageButtonParent.setImageBitmap(FirstLoginActivity.bitmapParent);
+        if(FirstLoginActivity.bitmapKid!=null)
+            imageButtonKid.setImageBitmap(FirstLoginActivity.bitmapKid);
+
+        if(FirstLoginActivity.uriParent!=null)
+            imageButtonParent.setImageURI(FirstLoginActivity.uriParent);
+        if(FirstLoginActivity.uriKid!=null)
+            imageButtonKid.setImageURI(FirstLoginActivity.uriKid);
 
         imageButtonParent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +134,14 @@ public class ModificaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if(FirstLoginActivity.bitmapParent!=bitmapParent)
+                    FirstLoginActivity.bitmapParent=bitmapParent;
+                if(FirstLoginActivity.bitmapKid!=bitmapKid)
+                    FirstLoginActivity.bitmapKid=bitmapKid;
+                if(FirstLoginActivity.uriParent!=uriParent)
+                    FirstLoginActivity.uriParent=uriParent;
+                if(FirstLoginActivity.uriKid!=uriKid)
+                    FirstLoginActivity.uriKid=uriKid;
 
                 if(!nome_bambino.getText().toString().equals(""))
                     db.setChildrenName(nome_bambino.getText().toString());
@@ -128,16 +159,21 @@ public class ModificaActivity extends AppCompatActivity {
     }
 
 
+
     private void openCamera() {
-        file= new File(Environment.getExternalStorageDirectory(),MEDIA_DIRECTORY);
+        file= new File (Environment.getExternalStorageDirectory(),MEDIA_DIRECTORY);
         file.mkdirs();
 
+        File newFile;
+        newFile = new File(path + PARENT_PICTURE_NAME);
+        if(!genitore)
+            newFile = new File(path + KID_PICTURE_NAME);
 
-        File newFile = new File(path);
 
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newFile));
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(newFile));
         startActivityForResult(intent, PHOTO_CODE);
 
     }
@@ -153,20 +189,27 @@ public class ModificaActivity extends AppCompatActivity {
                 break;
             case SELECT_PICTURE:
                 if(resultCode == RESULT_OK) {
-                    Uri uri = data.getData();
-                    if(genitore)
-                        imageButtonParent.setImageURI(uri);
-                    else
-                        imageButtonKid.setImageURI(uri);
+                    if(genitore) {
+                        uriParent=data.getData();
+                        imageButtonParent.setImageURI(uriParent);
+                    }else {
+                        uriKid=data.getData();
+                        imageButtonKid.setImageURI(uriKid);
+                    }
                 }
                 break;
         }
     }
 
     private void decodeBitmap(String dir){
-        Bitmap bitmap;
-        bitmap = BitmapFactory.decodeFile(dir);
-        imageButtonParent.setImageBitmap(bitmap);
+
+        if(genitore) {
+            bitmapParent = BitmapFactory.decodeFile(dir + PARENT_PICTURE_NAME);
+            imageButtonParent.setImageBitmap(bitmapParent);
+        }else {
+            bitmapKid = BitmapFactory.decodeFile(dir + KID_PICTURE_NAME);
+            imageButtonKid.setImageBitmap(bitmapKid);
+        }
     }
 
 }

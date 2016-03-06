@@ -1,6 +1,8 @@
 package com.polimi.deib.ildiariodigio;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 public class LoginActivity extends AppCompatActivity {
 
     ImageButton parent_button;
+    ImageButton kid_button;
     ImageButton modifica_button; // dejo el enter por probar luego cuando este suelto habra que poner el lapiz
     TextView nome_bambino;
     TextView nome_genitore;
@@ -34,7 +37,19 @@ public class LoginActivity extends AppCompatActivity {
 
         db.close();
         parent_button = (ImageButton)findViewById(R.id.imageButton_parent);
+        kid_button = (ImageButton) findViewById(R.id.imageButton_kid);
+
         modifica_button = (ImageButton)findViewById(R.id.button_modify);
+
+        if(FirstLoginActivity.bitmapParent!=null)
+        parent_button.setImageBitmap(FirstLoginActivity.bitmapParent);
+        if(FirstLoginActivity.bitmapKid!=null)
+        kid_button.setImageBitmap(FirstLoginActivity.bitmapKid);
+
+        if(FirstLoginActivity.uriParent!=null)
+        parent_button.setImageURI(FirstLoginActivity.uriParent);
+        if(FirstLoginActivity.uriKid!=null)
+        kid_button.setImageURI(FirstLoginActivity.uriKid);
 
         parent_button.setOnClickListener(new View.OnClickListener() {
             @Override
