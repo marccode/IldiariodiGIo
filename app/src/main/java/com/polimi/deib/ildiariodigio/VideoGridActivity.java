@@ -13,9 +13,12 @@ import android.graphics.drawable.LayerDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -31,6 +34,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +49,8 @@ public class VideoGridActivity extends AppCompatActivity {
     private String path_selected;
     private  int selected;
     private int menu_selected;
+
+    private boolean ready;
 
     private GridView grid;
     private GridAdapter ga;
@@ -61,6 +67,7 @@ public class VideoGridActivity extends AppCompatActivity {
 
         selected = -1;
         menu_selected = -1;
+        ready = false;
 
         TextView tv = (TextView) findViewById(R.id.textview_activity_title);
         Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
@@ -94,7 +101,16 @@ public class VideoGridActivity extends AppCompatActivity {
         });
 
         video_manager = new MediaManager(getApplicationContext());
-        all_videos = video_manager.getAllVideos();
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                all_videos = video_manager.getAllVideos();
+            }
+        };
+        thread.start();
+
+
         if (all_videos == null) {
             Log.e("TAG", "all_songs is NULL");
         }
@@ -179,67 +195,72 @@ public class VideoGridActivity extends AppCompatActivity {
                 }
             }
             else {
-                rowView = inflater.inflate(R.layout.add_item_layout, null);
-                RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_add_audio_button);
-                rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
-                rowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder builderSingle = new AlertDialog.Builder(VideoGridActivity.this);
-                        builderSingle.setTitle("Seleziona un video");
+                    rowView = inflater.inflate(R.layout.add_item_layout, null);
+                    RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_add_audio_button);
+                    rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
+                    rowView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (ready) {
+                                AlertDialog.Builder builderSingle = new AlertDialog.Builder(VideoGridActivity.this);
+                                builderSingle.setTitle("Seleziona un video");
 
-                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                                VideoGridActivity.this,
-                                android.R.layout.simple_selectable_list_item);
+                                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                        VideoGridActivity.this,
+                                        android.R.layout.simple_selectable_list_item);
 
-                        for (int i = 0; i < all_videos.size(); ++i) {
-                            arrayAdapter.add(all_videos.get(i).get("videoTitle"));
+                                for (int i = 0; i < all_videos.size(); ++i) {
+                                    arrayAdapter.add(all_videos.get(i).get("videoTitle"));
+                                }
+
+                                builderSingle.setNegativeButton(
+                                        "cancel",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                builderSingle.setAdapter(
+                                        arrayAdapter,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                String title = all_videos.get(which).get("videoTitle");
+                                                // TRUNCAR TITLE
+                                                title = title.substring(0, Math.min(title.length(), 25));
+                                                String path = all_videos.get(which).get("videoPath");
+
+                                                // Find Duration:
+                                                Uri uri = Uri.parse(path);
+                                                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                                                mmr.setDataSource(getApplicationContext(), uri);
+                                                int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+
+                                                // Add to Database
+                                                DBAdapter db = new DBAdapter(mContext);
+                                                db.open();
+                                                id.add(db.addVideo(title, path, duration));
+                                                db.close();
+                                                names.add(title);
+                                                times.add(millisecondsToString(duration));
+                                                paths.add(path);
+
+                                                // OFFER TO CHANGE NAME
+                                                menu_selected = names.size() - 1;
+                                                changeTitleVideo();
+
+                                                notifyDataSetChanged();
+                                            }
+                                        });
+                                builderSingle.show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Caricamento della canzoni in corso...", Toast.LENGTH_LONG).show();
+                            }
                         }
-
-                        builderSingle.setNegativeButton(
-                                "cancel",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-
-                        builderSingle.setAdapter(
-                                arrayAdapter,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String title = all_videos.get(which).get("videoTitle");
-                                        String path = all_videos.get(which).get("videoPath");
-
-                                        // Find Duration:
-                                        Uri uri = Uri.parse(path);
-                                        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                                        mmr.setDataSource(getApplicationContext(), uri);
-                                        int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-
-                                        // Add to Database
-                                        DBAdapter db = new DBAdapter(mContext);
-                                        db.open();
-                                        id.add(db.addVideo(title, path, duration));
-                                        db.close();
-                                        names.add(title);
-                                        times.add(millisecondsToString(duration));
-                                        paths.add(path);
-
-                                        // OFFER TO CHANGE NAME
-                                        menu_selected = names.size() - 1;
-                                        changeTitleVideo();
-
-                                        notifyDataSetChanged();
-                                    }
-                                });
-                        builderSingle.show();
-                    }
-                });
-            }
-
+                    });
+                }
             rowView.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 160));
             return rowView;
         }
@@ -296,6 +317,9 @@ public class VideoGridActivity extends AppCompatActivity {
 
         // Use an EditText view to get user input.
         final EditText input = new EditText(this);
+        InputFilter[] fa= new InputFilter[1];
+        fa[0] = new InputFilter.LengthFilter(25);
+        input.setFilters(fa);
         input.setText(names.get(menu_selected));
         dialog.setView(input);
 
@@ -384,4 +408,19 @@ public class VideoGridActivity extends AppCompatActivity {
         return finalTimerString;
     }
 
+    private class SearchFiles extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            all_videos = video_manager.getAllSongs();
+
+            return null;
+        }
+
+        protected void onProgressUpdate(Void... params) {
+        }
+
+        @Override
+        protected void onPostExecute(Void params) {
+            ready = true;
+        }
+    }
 }
