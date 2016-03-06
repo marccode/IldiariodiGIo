@@ -29,11 +29,12 @@
     <LinearLayout
         android:id="@+id/modifica_foto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="70dp"
         android:layout_marginRight="70dp"
         android:layout_marginBottom="70dp"
         android:layout_marginTop="35dp"
+        android:orientation="vertical"
         android:layout_below="@id/textview_activity_title"
         android:layout_gravity="center">
 
@@ -42,6 +43,28 @@
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:src="#9FA8DA"/>
+
+        <EditText
+            android:id="@+id/title_photo"
+            android:background="@drawable/text_field"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:inputType="textCapWords"
+            android:hint="Titolo della foto"
+            android:textSize="20dp"
+            android:textColorHint="#a4a4a4"/>
+
+        <EditText
+            android:id="@+id/description_photo"
+            android:background="@drawable/text_field"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:inputType="textCapWords"
+            android:textSize="15dp"
+            android:hint="Descrivi qui cosa ti è piaciuto"
+            android:textColorHint="#a4a4a4"/>
 
 
     </LinearLayout>
@@ -57,5 +80,15 @@
         android:layout_marginRight="20dp"
         android:src="@drawable/button_enter"
         android:background="#00000000"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_alignBottom="@+id/modifica_foto"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="413dp"
+        android:layout_marginStart="413dp" />
 
 </RelativeLayout>
