@@ -60,7 +60,7 @@
             android:visibility="invisible" />
 
         <ImageButton
-            android:id="@+id/imageButton_upload_parent"
+            android:id="@+id/imageButton_modifica_parent"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:background="@drawable/upload_photo_parent"
@@ -109,7 +109,7 @@
             android:visibility="invisible" />
 
         <ImageButton
-            android:id="@+id/imageButton_upload_kid"
+            android:id="@+id/imageButton_modifica_kid"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="fitCenter"

@@ -64,10 +64,15 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:background="@drawable/upload_photo_parent"
-            android:scaleType="fitCenter"
+
+            android:scaleType="fitXY"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:layout_weight="0.3" />
+            android:layout_weight="0.3"
+
+            android:shape="oval"
+
+        />
 
         <EditText
             android:id="@+id/nome_genitori"
@@ -112,7 +117,8 @@
             android:id="@+id/imageButton_upload_kid"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:scaleType="fitCenter"
+            android:shape="oval"
+            android:scaleType="fitXY"
             android:background="@drawable/upload_photo_kid"
             android:adjustViewBounds="true"
             android:layout_gravity="center"

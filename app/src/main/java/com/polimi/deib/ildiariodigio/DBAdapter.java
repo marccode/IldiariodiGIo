@@ -4,6 +4,7 @@ package com.polimi.deib.ildiariodigio;
  * Created by marc on 26/02/16.
  */
 
+        import java.net.URI;
         import java.sql.SQLException;
 
         import android.content.ContentValues;
@@ -241,8 +242,6 @@ public class DBAdapter {
         return c.getString(0);
     }
     // </PROFILES>
-
-
 
 
     // <DIARIO>
