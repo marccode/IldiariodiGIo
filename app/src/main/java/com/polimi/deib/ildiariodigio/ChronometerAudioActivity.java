@@ -107,6 +107,11 @@ public class ChronometerAudioActivity extends Activity {
             }
         });
 
+        // Important
+
+        // Getting all songs list
+        //songsList = songManager.getPlayList();
+
         // By default play first song
         playSong();
 

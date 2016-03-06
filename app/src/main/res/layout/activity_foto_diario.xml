@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:gravity="center"
-        android:text="Cosa ti è piaciuto\n oggi?"
+        android:text="Oggi"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp" />
 
@@ -39,49 +39,40 @@
         android:layout_gravity="center">
 
         <ImageView
+            android:id="@+id/foto_modify"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            android:src="@drawable/rounded_corners"
-            android:id="@+id/foto_modify"/>
+            android:src="#9FA8DA"/>
 
-
-        <EditText
+        <TextView
             android:id="@+id/title_photo"
-            android:background="@drawable/text_field"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginTop="20dp"
-            android:inputType="textCapWords"
-            android:textColor="#FFFFFF"
-            android:hint="Titolo della foto"
-            android:textSize="20dp"
-            android:textColorHint="#a4a4a4"/>
+            android:text="Titolo della foto"
+            android:textSize="20dp"/>
 
-        <EditText
+        <TextView
             android:id="@+id/description_photo"
-            android:background="@drawable/text_field"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
-            android:inputType="textMultiLine"
-            android:textColor="#FFFFFF"
-            android:textSize="15dp"
-            android:hint="Descrivi qui cosa ti è piaciuto"
-            android:textColorHint="#a4a4a4"/>
+            android:text="Descrivi qui cosa ti è piaciuto"
+            android:textSize="15dp"/>
 
 
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton_enter"
+        android:id="@+id/image_modify"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="fitXY"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"
-        android:src="@drawable/button_enter"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/pencil"
         android:background="#00000000"/>
 
 

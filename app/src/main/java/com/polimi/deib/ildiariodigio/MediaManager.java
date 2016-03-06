@@ -60,7 +60,6 @@ public class MediaManager {
             song.put("songPath", path);
             songsList.add(song);
         }
-        Log.e("TAG", "ACABAT!");
         return songsList;
     }
 

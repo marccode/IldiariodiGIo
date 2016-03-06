@@ -25,5 +25,7 @@ public class DiarioGridActivity extends AppCompatActivity {
                 DiarioGridActivity.this.startActivity(intent);
             }
         });
+
+
     }
 }

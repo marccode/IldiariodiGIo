@@ -62,13 +62,13 @@ public class DiarioMenuActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 file_name = ruta_fotos + getCode() + ".jpg";
-                mi_foto = new File( file_name );
+                mi_foto = new File(file_name);
 
                 try {
                     mi_foto.createNewFile();
-                }catch (IOException ex) {
-                     Log.e("ERROR ", "Error:" + ex);
-                    }
+                } catch (IOException ex) {
+                    Log.e("ERROR ", "Error:" + ex);
+                }
 
 
                 Uri uri = Uri.fromFile(mi_foto);
@@ -76,9 +76,32 @@ public class DiarioMenuActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                startActivityForResult(intent, 0);
+
+                startActivityForResult(intent, 1);
+
+
             }
+
         });
+
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1) {
+
+            if (resultCode == RESULT_OK) {
+                Intent i = new Intent(DiarioMenuActivity.this, ModificaFotoActivity.class);
+                i.putExtra("from_camera", true);
+                i.putExtra("path_name", file_name);
+                DiarioMenuActivity.this.startActivity(i);
+            }
+            else {
+                Intent intent_no_photo = new Intent(DiarioMenuActivity.this, DiarioMenuActivity.class);
+                DiarioMenuActivity.this.startActivity(intent_no_photo);
+            }
+
+        }
 
     }
 
@@ -90,6 +113,7 @@ public class DiarioMenuActivity extends AppCompatActivity {
         String photoCode = "pic_" + date;
         return photoCode;
     }
+
 
 
 }
