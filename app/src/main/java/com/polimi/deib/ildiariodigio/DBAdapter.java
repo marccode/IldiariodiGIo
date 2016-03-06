@@ -51,16 +51,19 @@ public class DBAdapter {
             //db.execSQL(DATABASE_CREATE);
             db.execSQL("create table if not exists songs (id integer primary key autoincrement, title VARCHAR not null, path VARCHAR, duration integer)");
             db.execSQL("create table if not exists videos (id integer primary key autoincrement, title VARCHAR not null, path VARCHAR, duration integer)");
-            db.execSQL("create table if not exists profiles (id integer primary key autoincrement, name VARCHAR not null, type integer)");
+            db.execSQL("create table if not exists profiles (id integer primary key autoincrement, name VARCHAR not null, type integer, photo_path VARHCAR)");
             db.execSQL("create table if not exists diario (id integer primary key autoincrement, path VARCHAR not null, name VARCHAR, description VARCHAR, date VARCHAR)");
 
             // INIT TABLE PROFILES
             ContentValues initialValues = new ContentValues();
             initialValues.put("name", "Nome dil bambino");
             initialValues.put("type", 0);
+            initialValues.put("photo_path", "null");
             db.insert("profiles", null, initialValues);
+            initialValues = new ContentValues();
             initialValues.put("name", "Nome dil genitore");
             initialValues.put("type", 1);
+            initialValues.put("photo_path", "null");
             db.insert("profiles", null, initialValues);
         }
 
@@ -211,19 +214,45 @@ public class DBAdapter {
         c.moveToFirst();
         return c.getString(0);
     }
+
+    public void setProfilePhotoChildren(String photo) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("photo_path", photo);
+        db.update("profiles", newValues, "type = 0", null);
+    }
+
+    public void setProfilePhotoParent(String photo) {
+        ContentValues newValues = new ContentValues();
+        newValues.put("photo_path", photo);
+        db.update("profiles", newValues, "type = 1", null);
+    }
+
+    public String getProfilePhotoChildren() {
+        String query ="SELECT photo_path FROM profiles WHERE type = 0";
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        return c.getString(0);
+    }
+
+    public String getProfilePhotoParent() {
+        String query ="SELECT photo_path FROM profiles WHERE type = 1";
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        return c.getString(0);
+    }
     // </PROFILES>
 
 
 
 
     // <DIARIO>
-    public void addPhoto(String path, String name, String description, String date) {
+    public int addPhoto(String path, String name, String description, String date) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("path", path);
         initialValues.put("name", name);
         initialValues.put("description", description);
         initialValues.put("date", date);
-        db.insert("diario", null, initialValues);
+        return (int)db.insert("diario", null, initialValues);
     }
 
     public void deletePhoto(int id) {
@@ -236,19 +265,24 @@ public class DBAdapter {
         newValues.put("name", name);
         newValues.put("description", description);
         newValues.put("date", date);
-        db.update("profile", newValues, "id = " + id, null);
+        db.update("diario", newValues, "id = " + id, null);
     }
 
     public Cursor getPhoto(int id) {
-        String query ="SELECT * FROM profiles WHERE id = " + id;
+        String query ="SELECT * FROM diario WHERE id = " + id;
         Cursor c = db.rawQuery(query, null);
         return c;
     }
 
     public Cursor getAllPhotos() {
-        String query ="SELECT * FROM profiles";
+        String query ="SELECT id, path, date FROM diario oRDER BY datetime(date)";
         Cursor c = db.rawQuery(query, null);
         return c;
+    }
+
+    public void deleteAllPhotos() {
+        //db.delete("diario", null, null);
+        db.rawQuery("DELETE FROM diario", null);
     }
     // </DIARIO>
 }

@@ -1,54 +1,58 @@
+/*
 package com.polimi.deib.ildiariodigio;
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DiarioGridActivity extends AppCompatActivity {
-
-    ImageButton back;
+public class DiarioGridActivity2 extends AppCompatActivity {
 
     GenericModelAdapter adapter;
     ListView listView;
     private static final int NUMBER_OF_COLS = 4;
     List<Map<String, List<Object>>> items = new ArrayList<Map<String, List<Object>>>();
     Map<String, String> sectionHeaderTitles = new HashMap<String, String>();
-
     ArrayList<Photo> photos;
+
+
+    private class Photo {
+        public int id;
+        public String date;
+        public String path;
+
+        public Photo(int id, String path, String date) {
+            this.id = id;
+            this.date = date;
+            this.path = path;
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_diario_grid);
+        setContentView(R.layout.activity_main);
+        listView = (ListView)findViewById(R.id.listView);
 
         photos = new ArrayList<Photo>();
         DBAdapter db = new DBAdapter(getApplicationContext());
@@ -64,57 +68,55 @@ public class DiarioGridActivity extends AppCompatActivity {
             c.moveToNext();
         }
 
-
-        back = (ImageButton)findViewById(R.id.imageButton_back);
-
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DiarioGridActivity.this, HomeActivity.class);
-                DiarioGridActivity.this.startActivity(intent);
-            }
-        });
-
+        initDummyItems();
         adapter = new GenericModelAdapter(this,R.layout.list_item, items, sectionHeaderTitles, NUMBER_OF_COLS, mItemClickListener);
-        if (adapter == null) {
-            Log.e("TAG", "adapter is null");
-        }
-        listView = (ListView)findViewById(R.id.listView);
-        if (listView == null) {
-            Log.e("TAG", "listview is null");
-        }
         listView.setAdapter(adapter);
     }
 
     View.OnClickListener mItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //int position = (Integer)v.getTag(R.id.row);
-            //int col = (Integer)v.getTag(R.id.col);
+            int position = (Integer)v.getTag(R.id.row);
+            int col = (Integer)v.getTag(R.id.col);
 
-            //Map<String, List<Object>> map = adapter.getItem(position);
-            //String selectedItemType = adapter.getItemTypeAtPosition(position);
-            //List<Object> list = map.get(selectedItemType);
-            //GenericModel model = (GenericModel)list.get(col);
-            //Toast.makeText(getApplicationContext(), "" + model.getHeader(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getApplicationContext(), "clikclicklick", Toast.LENGTH_SHORT).show();
+            Map<String, List<Object>> map = adapter.getItem(position);
+            String selectedItemType = adapter.getItemTypeAtPosition(position);
+            List<Object> list = map.get(selectedItemType);
+            GenericModel model = (GenericModel)list.get(col);
+            Toast.makeText(getApplicationContext(), "" + model.getHeader(), Toast.LENGTH_SHORT).show();
         }
     };
 
-    private class Photo {
-        public int id;
-        public String date;
-        public String path;
+    private void initDummyItems(){
+        List<String> itemTypesList = new ArrayList<String>();
+        itemTypesList.add(Constants.ORANGE);
+        itemTypesList.add(Constants.PINEAPPLE);
+        itemTypesList.add(Constants.BANANA);
+        sectionHeaderTitles.put(Constants.ORANGE, "Oranges");
+        sectionHeaderTitles.put(Constants.PINEAPPLE, "Pineapples");
+        sectionHeaderTitles.put(Constants.BANANA, "Bananas");
 
-        public Photo(int id, String path, String date) {
-            this.id = id;
-            this.date = date;
-            this.path = path;
+        // PER CADA FOTO
+        for (String itemType : itemTypesList){
+            Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+            List<Object> list = new ArrayList<Object>();
+
+            for (int i = 0 ; i < 10 ; i++){
+                String itemName = itemType + " " + i;
+                String countryOfOrigin = "Country " + i;
+                int image;
+
+
+                list.add(object);
+            }
+
+            map.put(itemType, list);
+            items.add(map);
         }
     }
 
-    public class GenericModelAdapter extends ArrayAdapter<Map<String, List<Object>>> {
+}
+    public class GenericModelAdapter extends ArrayAdapter<Map<String, List<Object>>>{
 
         List<Map<String, List<Object>>> items = new ArrayList<Map<String, List<Object>>>();
         int numberOfCols;
@@ -124,14 +126,6 @@ public class DiarioGridActivity extends AppCompatActivity {
         LayoutInflater layoutInflater;
         View.OnClickListener mItemClickListener;
         Map<String, String> sectionHeaderTitles;
-
-        // <JO>
-        Date last_date;
-
-        ArrayList<ArrayList<Photo>> days;
-        boolean header;
-        int aux;
-        // </JO>
 
         public GenericModelAdapter(Context context, int textViewResourceId, List<Map<String, List<Object>>> items, int numberOfCols, View.OnClickListener mItemClickListener){
             this(context, textViewResourceId, items, null, numberOfCols, mItemClickListener);
@@ -144,85 +138,40 @@ public class DiarioGridActivity extends AppCompatActivity {
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.mItemClickListener = mItemClickListener;
             this.sectionHeaderTitles = sectionHeaderTitles;
-
-            // <JO>
-            aux = 1;
-            header = true;
-            try {
-                last_date = new SimpleDateFormat("yyyy-MM-dd").parse(photos.get(0).date);
-            }catch(java.text.ParseException e) {
-                e.printStackTrace();
-            }
-            days = new ArrayList<ArrayList<Photo>>();
-            days.add(new ArrayList<Photo>());
-            int j = 0;
-            int size = photos.size();
-            for (int i = 0; i < size; ++i) {
-                Date d = new Date();
-                try {
-                    d = new SimpleDateFormat("yyyy-MM-dd").parse(photos.get(i).date);
-                } catch(java.text.ParseException e) {
-                    e.printStackTrace();
-                }
-                if (d.after(last_date)) {
-                    days.add(new ArrayList<Photo>());
-                    ++j;
-                }
-                Photo p = photos.get(i);
-                days.get(j).add(p);
-            }
-
-            for (int i = 0; i < days.size(); ++i) {
-                Log.e("TAG", Integer.toString(days.get(i).size()));
-            }
-            // </JO>
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-
-            // <JO>
-            if (header) {
+            if(isHeaderPosition(position)){
                 convertView = layoutInflater.inflate(R.layout.grid_header_view, null);
-                TextView headerText = (TextView)convertView.findViewById(R.id.headerText);
-                String date_string = getDateString(days.get(position).get(0).date);
-                headerText.setText(date_string);
-                header = false;
-                return convertView;
-            }
-            else {
-                LinearLayout row = (LinearLayout)layoutInflater.inflate(R.layout.row_item, null);
 
+                TextView headerText = (TextView)convertView.findViewById(R.id.headerText);
+                String section = getItemTypeAtPosition(position);
+                headerText.setText(getHeaderForSection(section));
+                return convertView;
+            }else{
+                LinearLayout row = (LinearLayout)layoutInflater.inflate(R.layout.row_item, null);
                 Map<String, List<Object>> map = getItem(position);
                 List<Object> list = map.get(getItemTypeAtPosition(position));
 
-                int size_day = days.get(position - aux).size();
-                for (int i = 0; i < size_day; i++){
+                for (int i = 0; i < numberOfCols; i++){
                     FrameLayout grid = (FrameLayout)layoutInflater.inflate(R.layout.grid_item, row, false);
                     ImageView imageView;
                     if (i < list.size()){
+                        GenericModel model = (GenericModel)list.get(i);
                         if (grid != null){
                             imageView = (ImageView)grid.findViewWithTag("image");
-                            File imgFile = new  File(days.get(position - aux).get(i).path);
-
-                            if(imgFile.exists()){
-
-                                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
-                                imageView.setImageBitmap(myBitmap);
-
-                            }
+                            imageView.setBackgroundResource(model.getImageResource());
 
                             TextView textView = (TextView)grid.findViewWithTag("subHeader");
-                            textView.setText(Integer.toString(days.get(position - aux).get(i).id));
+                            textView.setText(model.getHeader());
 
-                            //grid.setTag(R.id.row, position);
-                            //grid.setTag(R.id.col, i);
+                            grid.setTag(R.id.row, position);
+                            grid.setTag(R.id.col, i);
                             grid.setOnClickListener(mItemClickListener);
                         }
-                    }
-                    else {
+                    }else{
                         if (grid != null){
                             grid.setVisibility(View.INVISIBLE);
                             grid.setOnClickListener(null);
@@ -230,121 +179,8 @@ public class DiarioGridActivity extends AppCompatActivity {
                     }
                     row.addView(grid);
                 }
-                header = true;
-                ++aux;
                 return row;
             }
-        }
-
-        private String getDateString(String date) {
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            String day_string = date.substring(8, 10);
-
-            String month_string;
-            switch (month) {
-                case 1:
-                    month_string = "gennaio";
-                    break;
-
-                case 2:
-                    month_string = "febbraio";
-                    break;
-
-                case 3:
-                    month_string = "marzo";
-                    break;
-
-                case 4:
-                    month_string = "marzo";
-                    break;
-
-                case 5:
-                    month_string = "maggio";
-                    break;
-
-                case 6:
-                    month_string = "giugno";
-                    break;
-
-                case 7:
-                    month_string = "luglio";
-                    break;
-
-                case 8:
-                    month_string = "agosto";
-                    break;
-
-                case 9:
-                    month_string = "settembre";
-                    break;
-
-                case 10:
-                    month_string = "ottobre";
-                    break;
-
-                case 11:
-                    month_string = "novembre";
-                    break;
-
-                case 12:
-                    month_string = "dicembre";
-                    break;
-
-                default:
-                    month_string = "unknown";
-            }
-
-            String year_string = "";
-            Date now = new Date();
-           if (now.getYear() != year) {
-                year_string = " " + Integer.toString(year);
-            }
-
-            Date d = new Date();
-            try {
-                d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-            } catch(java.text.ParseException e) {
-                e.printStackTrace();
-            }
-            String weekday_string = "Oggi";
-            if (!now.equals(d)) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(d);
-                int weekday = c.get(Calendar.DAY_OF_WEEK);
-
-                switch (weekday) {
-                    case 1:
-                        weekday_string = "domenica";
-                        break;
-
-                    case 2:
-                        weekday_string = "lunedì";
-                        break;
-
-                    case 3:
-                        weekday_string = "martedì";
-                        break;
-
-                    case 4:
-                        weekday_string = "mercoledì";
-                        break;
-
-                    case 5:
-                        weekday_string = "giovedì";
-                        break;
-
-                    case 6:
-                        weekday_string = "venerdì";
-                        break;
-
-                    case 7:
-                        weekday_string = "sabato";
-                        break;
-                }
-            }
-
-            return weekday_string + ", " + day_string + " " + month_string + year_string;
         }
 
         @Override
@@ -430,5 +266,6 @@ public class DiarioGridActivity extends AppCompatActivity {
         }
 
     }
-
 }
+
+*/

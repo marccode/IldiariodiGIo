@@ -50,11 +50,6 @@ public class ModificaFotoActivity extends AppCompatActivity {
         else {
 
             db.getPhoto(0);//debo cambiarlo este id
-
-
-
-
-
         }
 
         // aqui hay q hacer el booleano para distinguir si viene de camera o de Foto diario
@@ -90,7 +85,7 @@ public class ModificaFotoActivity extends AppCompatActivity {
         et_title_photo = (EditText) findViewById(R.id.title_photo);
         et_description_photo = (EditText) findViewById(R.id.description_photo);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         date = dateFormat.format(new Date() );
 
         button_enter = (ImageButton) findViewById(R.id.imageButton_enter);
@@ -105,12 +100,13 @@ public class ModificaFotoActivity extends AppCompatActivity {
                 DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
 
-                db.addPhoto(file_name, title_photo, description_photo, date);
+                int id = db.addPhoto(file_name, title_photo, description_photo, date);
 
                 db.close();
 
                 Toast.makeText(getApplicationContext(), "Entering menu", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(ModificaFotoActivity.this, FotoDiarioActivity.class);
+                Intent myIntent = new Intent(ModificaFotoActivity.this, DiarioMenuActivity.class);
+                myIntent.putExtra("id", id);
                 ModificaFotoActivity.this.startActivity(myIntent);
             }
         });

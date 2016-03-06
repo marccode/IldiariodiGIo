@@ -9,13 +9,6 @@
     android:paddingTop="0dp"
     tools:context="com.polimi.deib.ildiariodigio.DiarioGridActivity">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="0dp"
-
-        android:src="#303F9F" />
-
     <ImageButton
         android:id="@+id/imageButton_back"
         android:layout_width="24dp"
@@ -27,4 +20,15 @@
         android:layout_marginLeft="20dp"
         android:src="@drawable/button_back"
         android:background="#00000000"/>
+
+    <ListView
+        android:id="@+id/listView"
+        android:dividerHeight="0dp"
+        android:divider="@null"
+        android:layout_below="@id/imageButton_back"
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:cacheColorHint="#00000000"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>

@@ -32,6 +32,15 @@ public class DiarioMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diario_menu);
 
+        // TEMP
+        /*
+        DBAdapter db = new DBAdapter(getApplicationContext());
+        db.open();
+        db.deleteAllPhotos();
+        db.close();
+        */
+        // FIN TEMP
+
         camera = (Button)findViewById(R.id.access_camera);
         guarda_foto = (Button)findViewById(R.id.access_photos);
         back = (ImageButton)findViewById(R.id.imageButton_back);

@@ -26,9 +26,6 @@
         <activity android:name=".AudioGridActivity" />
         <activity android:name=".ChronometerMenuActivity" />
         <activity android:name=".AnimationSetTimeActivity" />
-        <activity android:name=".DiarioMenuActivity" />
-        <activity android:name=".DiarioGridActivity" />
-
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -42,8 +39,10 @@
         <activity android:name=".ChronometerAnimationActivity" />
         <activity android:name=".AnimationSetTypeActivity" />
         <activity android:name=".BravoActivity" />
+        <activity android:name=".DiarioMenuActivity" />
+        <activity android:name=".DiarioGridActivity" />
         <activity android:name=".ModificaFotoActivity" />
-        <activity android:name=".FotoDiarioActivity" />
+        <activity android:name=".DiarioGridActivity2"></activity>
     </application>
 
 </manifest>
