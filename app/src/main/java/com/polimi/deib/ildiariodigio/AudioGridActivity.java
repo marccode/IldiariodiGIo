@@ -9,8 +9,11 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -26,7 +29,9 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -47,6 +52,8 @@ public class AudioGridActivity extends AppCompatActivity {
     private int menu_selected;
     private  int selected;
 
+    private boolean ready;
+
     private GridView grid;
     private GridAdapter ga;
 
@@ -57,6 +64,7 @@ public class AudioGridActivity extends AppCompatActivity {
 
         selected = -1;
         menu_selected = -1;
+        ready = false;
 
         TextView tv = (TextView) findViewById(R.id.textview_activity_title);
         Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
@@ -91,7 +99,9 @@ public class AudioGridActivity extends AppCompatActivity {
 
 
         song_manager = new MediaManager(getApplicationContext());
-        all_songs = song_manager.getAllSongs();
+
+        new SearchFiles().execute();
+
 
         grid = (GridView) findViewById(R.id.grid_audios);
         ga = new GridAdapter(this);
@@ -170,7 +180,6 @@ public class AudioGridActivity extends AppCompatActivity {
                 }
             }
             else {
-
                 rowView = inflater.inflate(R.layout.add_item_layout, null);
                 RelativeLayout rl = (RelativeLayout) rowView.findViewById(R.id.relativelayout_add_audio_button);
                 rl.setBackground(mContext.getResources().getDrawable(R.drawable.audio_button));
@@ -179,64 +188,67 @@ public class AudioGridActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        // Create Dialog:
-                        AlertDialog.Builder builderSingle = new AlertDialog.Builder(AudioGridActivity.this);
-                        builderSingle.setTitle("Seleziona una canzone");
+                        if (ready) {
+                            // Create Dialog:
+                            AlertDialog.Builder builderSingle = new AlertDialog.Builder(AudioGridActivity.this);
+                            builderSingle.setTitle("Seleziona una canzone");
 
-                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                                AudioGridActivity.this,
-                                android.R.layout.simple_selectable_list_item);
+                            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                    AudioGridActivity.this,
+                                    android.R.layout.simple_selectable_list_item);
 
-                        for (int i = 0; i < all_songs.size(); ++i) {
-                            arrayAdapter.add(all_songs.get(i).get("songTitle"));
+                            for (int i = 0; i < all_songs.size(); ++i) {
+                                arrayAdapter.add(all_songs.get(i).get("songTitle"));
+                            }
+
+                            builderSingle.setNegativeButton(
+                                    "cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+                            builderSingle.setAdapter(
+                                    arrayAdapter,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String title = all_songs.get(which).get("songTitle");
+                                            // TRUNCAR TITLE
+                                            title = title.substring(0, Math.min(title.length(), 25));
+                                            String path = all_songs.get(which).get("songPath");
+
+                                            // Find Duration:
+                                            Uri uri = Uri.parse(path);
+                                            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                                            mmr.setDataSource(getApplicationContext(), uri);
+                                            int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+
+                                            // Add to Database
+                                            DBAdapter db = new DBAdapter(mContext);
+                                            db.open();
+                                            id.add(db.addSong(title, path, duration));
+                                            db.close();
+                                            names.add(title);
+                                            times.add(millisecondsToString(duration));
+                                            paths.add(path);
+
+                                            // OFFER TO CHANGE NAME:
+                                            menu_selected = names.size() - 1;
+                                            changeTitleAudio();
+
+                                            notifyDataSetChanged();
+                                        }
+                                    });
+                            builderSingle.show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Caricamento dei video in corso...", Toast.LENGTH_LONG).show();
                         }
-
-                        builderSingle.setNegativeButton(
-                                "cancel",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-
-                        builderSingle.setAdapter(
-                                arrayAdapter,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String title = all_songs.get(which).get("songTitle");
-                                        String path = all_songs.get(which).get("songPath");
-
-                                        // Find Duration:
-                                        Uri uri = Uri.parse(path);
-                                        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                                        mmr.setDataSource(getApplicationContext(), uri);
-                                        int duration = Integer.parseInt(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-
-                                        // Add to Database
-                                        DBAdapter db = new DBAdapter(mContext);
-                                        db.open();
-                                        id.add(db.addSong(title, path, duration));
-                                        db.close();
-                                        names.add(title);
-                                        times.add(millisecondsToString(duration));
-                                        paths.add(path);
-
-                                        // OFFER TO CHANGE NAME:
-                                        menu_selected = names.size() - 1;
-                                        changeTitleAudio();
-
-                                        notifyDataSetChanged();
-                                    }
-                                });
-                        builderSingle.show();
                     }
-
                 });
-
             }
-
             rowView.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 160));
             return rowView;
         }
@@ -294,6 +306,9 @@ public class AudioGridActivity extends AppCompatActivity {
 
         // Use an EditText view to get user input.
         final EditText input = new EditText(this);
+        InputFilter[] fa= new InputFilter[1];
+        fa[0] = new InputFilter.LengthFilter(25);
+        input.setFilters(fa);
         input.setText(names.get(menu_selected));
         dialog.setView(input);
 
@@ -382,4 +397,19 @@ public class AudioGridActivity extends AppCompatActivity {
         return finalTimerString;
     }
 
+    private class SearchFiles extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            all_songs = song_manager.getAllSongs();
+
+            return null;
+        }
+
+        protected void onProgressUpdate(Void... params) {
+        }
+
+        @Override
+        protected void onPostExecute(Void params) {
+            ready = true;
+        }
+    }
 }
