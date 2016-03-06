@@ -268,13 +268,12 @@ public class DBAdapter {
     }
 
     public Cursor getPhoto(int id) {
-        String query ="SELECT * FROM diario WHERE id = " + id;
-        Cursor c = db.rawQuery(query, null);
-        return c;
+        String query ="SELECT name, path, description, date FROM diario WHERE id = " + Integer.toString(id);
+        return db.rawQuery(query, null);
     }
 
     public Cursor getAllPhotos() {
-        String query ="SELECT id, path, date FROM diario oRDER BY datetime(date)";
+        String query ="SELECT id, path, date FROM diario ORDER BY datetime(date)";
         Cursor c = db.rawQuery(query, null);
         return c;
     }
