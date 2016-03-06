@@ -29,11 +29,11 @@
     <ImageButton
         android:id="@+id/imageButton_parent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="260dp"
         android:src="@drawable/profile_placeholder"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:background="@drawable/button_parent_login"
-        android:foregroundGravity="center"
+        android:foregroundGravity="bottom|center"
         android:layout_alignTop="@+id/imageButton_kid"
         android:layout_alignBottom="@+id/imageButton_kid"
         android:paddingBottom="60dp"
@@ -41,7 +41,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/textView"
-        android:layout_toStartOf="@+id/textView"/>
+        android:layout_toStartOf="@+id/textView"
+        android:layout_centerVertical="true"
+        />
 
     <ImageButton
         android:id="@+id/button_modify"
@@ -59,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="260dp"
         android:src="@drawable/profile_placeholder"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:background="@drawable/button_kid_login"
         android:paddingBottom="60dp"
         android:paddingTop="60dp"
