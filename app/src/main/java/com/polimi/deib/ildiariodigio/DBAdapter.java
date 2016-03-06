@@ -246,7 +246,7 @@ public class DBAdapter {
     }
 
     public Cursor getAllPhotos() {
-        String query ="SELECT * FROM profiles";
+        String query ="SELECT * FROM profiles oRDER BY datetime(date)";
         Cursor c = db.rawQuery(query, null);
         return c;
     }

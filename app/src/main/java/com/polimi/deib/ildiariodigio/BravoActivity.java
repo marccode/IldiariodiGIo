@@ -20,6 +20,8 @@ public class BravoActivity extends AppCompatActivity {
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /*
                 Intent i = getIntent();
                 switch(i.getStringExtra("chronometer_type")) {
                     case "animation":
@@ -54,14 +56,17 @@ public class BravoActivity extends AppCompatActivity {
                         BravoActivity.this.startActivity(intentVideo);
                         break;
                 }
+                */
+                Intent i = new Intent(BravoActivity.this, ChronometerMenuActivity.class);
+                BravoActivity.this.startActivity(i);
             }
         });
 
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(BravoActivity.this, HomeActivity.class);
-                BravoActivity.this.startActivity(myIntent);
+                Intent i = new Intent(BravoActivity.this, HomeActivity.class);
+                BravoActivity.this.startActivity(i);
             }
         });
 
