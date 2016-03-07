@@ -10,8 +10,10 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,26 +44,25 @@ public class LoginActivity extends AppCompatActivity {
         nome_genitore =(TextView) findViewById(R.id.tvParent);
         nome_genitore.setText(db.getParentName());
 
-        db.close();
+
         parent_button = (ImageButton)findViewById(R.id.imageButton_parent);
         kid_button = (ImageButton) findViewById(R.id.imageButton_kid);
 
         modifica_button = (ImageButton)findViewById(R.id.button_modify);
-
-        if(FirstLoginActivity.bitmapParent!=null)
-        parent_button.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapParent));
-
-        if(FirstLoginActivity.bitmapKid!=null)
-        kid_button.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapKid));
-
-        if(FirstLoginActivity.uriParent!=null) {
-            parent_button.setImageURI(FirstLoginActivity.uriParent);
+        if(db.getProfilePhotoParent()!="null"){
+            Uri uri= Uri.parse(db.getProfilePhotoParent());
+            Log.e("el padre en el login", db.getProfilePhotoParent());
+            parent_button.setImageURI(uri);
             parent_button.setImageBitmap(getCroppedBitmap(drawableToBitmap(parent_button.getDrawable())));
         }
-        if(FirstLoginActivity.uriKid!=null) {
-            kid_button.setImageURI(FirstLoginActivity.uriKid);
+        if(db.getProfilePhotoChildren()!="null") {
+            Uri uri = Uri.parse(db.getProfilePhotoChildren());
+            Log.e("el hijo en el login", db.getProfilePhotoChildren());
+            kid_button.setImageURI(uri);
+            Log.e("no metes drawable jiji",kid_button.getDrawable().toString());
             kid_button.setImageBitmap(getCroppedBitmap(drawableToBitmap(kid_button.getDrawable())));
         }
+
 
         parent_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
+        db.close();
     }
 
     public static Bitmap getCroppedBitmap(Bitmap bitmap) {
@@ -124,7 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                 return bitmapDrawable.getBitmap();
             }
         }
-
         if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
         } else {

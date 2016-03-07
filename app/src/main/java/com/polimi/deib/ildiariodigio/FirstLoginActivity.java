@@ -21,6 +21,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,10 +49,9 @@ public class FirstLoginActivity extends AppCompatActivity {
     private final int PHOTO_CODE=400;
     private final int SELECT_PICTURE=200;
 
-    public static Uri uriParent;
-    public static Uri uriKid;
-    public static Bitmap bitmapParent;
-    public static Bitmap bitmapKid;
+    private Bitmap bitmap;
+    private Uri uri;
+
 
     private ImageButton imageButtonParent;
     private ImageButton imageButtonKid;
@@ -59,6 +59,8 @@ public class FirstLoginActivity extends AppCompatActivity {
             MEDIA_DIRECTORY + File.separator;
     private File file;
 
+    String path_genitore=null;
+    String path_bambino=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +69,6 @@ public class FirstLoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_first_login);
 
-        bitmapKid=null;
-        bitmapParent=null;
-        uriKid=null;
-        uriParent=null;
 
         etNomeBambino = (EditText) findViewById(R.id.nome_bambino);
         etNomeGenitori = (EditText) findViewById(R.id.nome_genitori);
@@ -145,6 +143,15 @@ public class FirstLoginActivity extends AppCompatActivity {
                 nome_bambino = etNomeBambino.getText().toString();
                 nome_genitore = etNomeGenitori.getText().toString();
 
+                if(path_genitore!=null)
+                db.setProfilePhotoParent(path_genitore);
+                else
+                db.setProfilePhotoParent(null);
+
+                if(path_bambino!=null)
+                db.setProfilePhotoChildren(path_bambino);
+                else
+                db.setProfilePhotoChildren(null);
 
                 if (!nome_bambino.matches(""))
                     db.setChildrenName(nome_bambino);
@@ -191,20 +198,24 @@ public class FirstLoginActivity extends AppCompatActivity {
         switch(requestCode){
             case PHOTO_CODE:
                 if(resultCode == RESULT_OK)
+
                     decodeBitmap(path);
+
                 break;
             case SELECT_PICTURE:
                 if(resultCode == RESULT_OK) {
                     if(genitore) {
-                        bitmapParent=null;
-                        uriParent=data.getData();
-                        imageButtonParent.setImageURI(uriParent);
+                        uri=data.getData();
+                        path_genitore = (uri.toString()+ PARENT_PICTURE_NAME);
+                        Log.e("PATH PADRE GALERIA",path_genitore);
+                        imageButtonParent.setImageURI(uri);
                         imageButtonParent.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonParent.getDrawable())));
 
                     }else {
-                        bitmapKid=null;
-                        uriKid=data.getData();
-                        imageButtonKid.setImageURI(uriKid);
+                        uri=data.getData();
+                        path_bambino = (uri.toString() + KID_PICTURE_NAME);
+                        Log.e("PATH HIJO GALERIA", path_bambino);
+                        imageButtonKid.setImageURI(uri);
                         imageButtonKid.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonKid.getDrawable())));
 
                     }
@@ -246,13 +257,13 @@ public class FirstLoginActivity extends AppCompatActivity {
     private void decodeBitmap(String dir){
 
         if(genitore) {
-            uriParent=null;
-            bitmapParent = BitmapFactory.decodeFile(dir + PARENT_PICTURE_NAME);
-            imageButtonParent.setImageBitmap(getCroppedBitmap(bitmapParent));
+            path_genitore=dir + PARENT_PICTURE_NAME;
+            bitmap = BitmapFactory.decodeFile(dir + PARENT_PICTURE_NAME);
+            imageButtonParent.setImageBitmap(getCroppedBitmap(bitmap));
         }else {
-            uriKid=null;
-            bitmapKid = BitmapFactory.decodeFile(dir + KID_PICTURE_NAME);
-            imageButtonKid.setImageBitmap(getCroppedBitmap(bitmapKid));
+            path_bambino = dir + KID_PICTURE_NAME;
+            bitmap = BitmapFactory.decodeFile(dir + KID_PICTURE_NAME);
+            imageButtonKid.setImageBitmap(getCroppedBitmap(bitmap));
         }
     }
 

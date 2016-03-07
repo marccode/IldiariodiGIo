@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,6 +49,8 @@ public class ModificaActivity extends AppCompatActivity {
     public static Bitmap bitmapMParent;
     public static Bitmap bitmapMKid;
 
+    String path_parent=null;
+    String path_kid=null;
 
 
 
@@ -75,17 +78,15 @@ public class ModificaActivity extends AppCompatActivity {
         imageButtonParent = (ImageButton) findViewById(R.id.imageButton_modifica_parent);
         imageButtonKid = (ImageButton) findViewById(R.id.imageButton_modifica_kid);
 
-        if(FirstLoginActivity.bitmapParent!=null)
-            imageButtonParent.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapParent));
-        if(FirstLoginActivity.bitmapKid!=null) {
-            imageButtonKid.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapKid));
-        }
-        if(FirstLoginActivity.uriParent!=null) {
-            imageButtonParent.setImageURI(FirstLoginActivity.uriParent);
+        if(db.getProfilePhotoParent()!=null){
+            Uri uri= Uri.parse(db.getProfilePhotoParent());
+            imageButtonParent.setImageURI(uri);
             imageButtonParent.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonParent.getDrawable())));
         }
-        if(FirstLoginActivity.uriKid!=null) {
-            imageButtonKid.setImageURI(FirstLoginActivity.uriKid);
+        if(db.getProfilePhotoChildren()!=null) {
+            Uri uri = Uri.parse(db.getProfilePhotoChildren());
+
+            imageButtonKid.setImageURI(uri);
             imageButtonKid.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonKid.getDrawable())));
         }
         imageButtonParent.setOnClickListener(new View.OnClickListener() {
@@ -143,25 +144,23 @@ public class ModificaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (FirstLoginActivity.bitmapParent != bitmapMParent)
-                    FirstLoginActivity.bitmapParent = bitmapMParent;
-                if (FirstLoginActivity.bitmapKid != bitmapMKid)
-                    FirstLoginActivity.bitmapKid = bitmapMKid;
-                if (FirstLoginActivity.uriParent != uriMParent)
-                    FirstLoginActivity.uriParent = uriMParent;
-                if (FirstLoginActivity.uriKid != uriMKid)
-                    FirstLoginActivity.uriKid = uriMKid;
+                    if(path_parent!=null)
+                    db.setProfilePhotoParent(path_parent);
+                    if(path_kid!=null)
+                    db.setProfilePhotoChildren(path_kid);
 
-                if (!nome_bambino.getText().toString().equals(""))
-                    db.setChildrenName(nome_bambino.getText().toString());
-                if (!nome_genitore.getText().toString().equals(""))
-                    db.setParentName(nome_genitore.getText().toString());
 
-                db.close();
+                    if (!nome_bambino.getText().toString().equals(""))
+                        db.setChildrenName(nome_bambino.getText().toString());
+                    if (!nome_genitore.getText().toString().equals(""))
+                        db.setParentName(nome_genitore.getText().toString());
 
-                Toast.makeText(getApplicationContext(), "Entering the menu to modify", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(ModificaActivity.this, LoginActivity.class);
-                ModificaActivity.this.startActivity(myIntent);
+                    db.close();
+
+                    Toast.makeText(getApplicationContext(), "Entering the menu to modify", Toast.LENGTH_LONG).show();
+                    Intent myIntent = new Intent(ModificaActivity.this, LoginActivity.class);
+                    ModificaActivity.this.startActivity(myIntent);
+
             }
         });
 
@@ -200,11 +199,13 @@ public class ModificaActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK) {
                     if(genitore) {
                         uriMParent=data.getData();
+                        path_parent = uriMParent.toString() + PARENT_PICTURE_NAME;
                         imageButtonParent.setImageURI(uriMParent);
                         imageButtonParent.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonParent.getDrawable())));
 
                     }else {
                         uriMKid=data.getData();
+                        path_kid = uriMKid.toString() + KID_PICTURE_NAME;
                         imageButtonKid.setImageURI(uriMKid);
                         imageButtonKid.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonKid.getDrawable())));
 
@@ -248,10 +249,12 @@ public class ModificaActivity extends AppCompatActivity {
     private void decodeBitmap(String dir){
 
         if(genitore) {
+            path_parent = dir + PARENT_PICTURE_NAME;
             bitmapMParent = BitmapFactory.decodeFile(dir + PARENT_PICTURE_NAME);
             bitmapMParent=getCroppedBitmap(bitmapMParent);
             imageButtonParent.setImageBitmap(bitmapMParent);
         }else {
+            path_kid = dir + KID_PICTURE_NAME;
             bitmapMKid = BitmapFactory.decodeFile(dir + KID_PICTURE_NAME);
             bitmapMKid = getCroppedBitmap(bitmapMKid);
             imageButtonKid.setImageBitmap(bitmapMKid);
