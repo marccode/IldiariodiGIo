@@ -42,7 +42,8 @@
         <activity android:name=".DiarioMenuActivity" />
         <activity android:name=".DiarioGridActivity" />
         <activity android:name=".ModificaFotoActivity" />
-        <activity android:name=".DiarioGridActivity2"></activity>
+        <activity android:name=".FotoDiarioActivity" />
+
     </application>
 
 </manifest>

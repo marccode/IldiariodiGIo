@@ -6,8 +6,8 @@
 
     <ImageButton
         android:id="@+id/imageButton_back"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
         android:scaleType="fitXY"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -20,7 +20,7 @@
         android:id="@+id/textview_activity_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="40sp"
         android:gravity="center"
         android:text="Seleziona\n un animazione"
         android:layout_centerHorizontal="true"
@@ -86,9 +86,8 @@
 
     <ImageButton
         android:id="@+id/imageButton_next"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:scaleType="fitXY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="20dp"

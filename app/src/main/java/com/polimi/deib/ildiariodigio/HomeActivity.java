@@ -26,23 +26,33 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Intent i = getIntent();
+        //String chi = i.getStringExtra("chi");
+
         // Title
         TextView title = (TextView) findViewById(R.id.textView_title);
         Typeface tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Roboto/Roboto-Bold.ttf");
         title.setTypeface(tf);
         title.setTextColor(getResources().getColor(R.color.title_grey));
 
+
         button_cronometro = (Button)findViewById(R.id.button_cronometro);
-        tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static.otf");
-        button_cronometro.setTypeface(tf);
-        button_cronometro.setTextColor(getResources().getColor(R.color.white));
-        button_cronometro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(HomeActivity.this, ChronometerMenuActivity.class);
-                HomeActivity.this.startActivity(i);
-            }
-        });
+        //if (chi.equals("parent")) {
+            tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static.otf");
+            button_cronometro.setTypeface(tf);
+            button_cronometro.setTextColor(getResources().getColor(R.color.white));
+            button_cronometro.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(HomeActivity.this, ChronometerMenuActivity.class);
+                    HomeActivity.this.startActivity(i);
+                }
+            });
+        //}
+        //else {
+        //    button_cronometro.setVisibility(View.GONE);
+       // }
+
 
         button_agenda = (Button)findViewById(R.id.button_agenda);
         tf = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Static/Static.otf");

@@ -26,51 +26,59 @@
         android:gravity="center_horizontal"
         android:text="Con cosa contiamo\n il tempo?" />
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:layout_below="@id/textView_title"
+        android:layout_marginTop="35dip"
+        android:layout_centerHorizontal="true"
+        android:weightSum="400">
+
+        <Button
+            android:id="@+id/button_animation"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:baselineAligned="false"
-            android:orientation="vertical"
-            android:layout_below="@id/textView_title"
-            android:layout_marginTop="35dip"
-            android:layout_centerHorizontal="true">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginBottom="10dip"
+            android:drawableRight="@drawable/flecha_home"
+            android:background="@color/orange"
+            android:text="Animazione"
+            android:textSize="18dp"
+            android:textColor="#ffffff"
+            android:layout_weight="4" />
 
-            <Button
-                android:id="@+id/button_animation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dip"
-                android:drawableRight="@android:drawable/btn_star_big_on"
-                android:background="@color/orange"
-                android:text="Animazione"/>
+        <Button
+            android:id="@+id/button_audio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginBottom="10dip"
+            android:drawableRight="@drawable/flecha_home"
+            android:background="@color/orange"
+            android:text="I miei audio"
+            android:textSize="18dp"
+            android:textColor="#ffffff"
+            android:layout_weight="4" />
 
-            <Button
-                android:id="@+id/button_audio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dip"
-                android:drawableRight="@android:drawable/btn_star_big_on"
-                android:background="@color/orange"
-                android:text="Audio"/>
+        <Button
+            android:id="@+id/button_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginBottom="10dip"
+            android:drawableRight="@drawable/flecha_home"
+            android:background="@color/orange"
+            android:text="I miei video"
+            android:textSize="18dp"
+            android:textColor="#ffffff"
+            android:layout_weight="4" />
 
-            <Button
-                android:id="@+id/button_video"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dip"
-                android:drawableRight="@android:drawable/btn_star_big_on"
-                android:background="@color/orange"
-                android:text="I mei video"/>
-
-        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
-
-

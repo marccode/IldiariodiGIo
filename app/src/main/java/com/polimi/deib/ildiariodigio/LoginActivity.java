@@ -18,10 +18,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 public class LoginActivity extends AppCompatActivity {
 
-    ImageButton parent_button;
-    ImageButton kid_button;
+    ImageButton imageButtonParent;
+    ImageButton imageButtonKid;
     ImageButton modifica_button; // dejo el enter por probar luego cuando este suelto habra que poner el lapiz
     TextView nome_bambino;
     TextView nome_genitore;
@@ -42,39 +44,56 @@ public class LoginActivity extends AppCompatActivity {
         nome_genitore =(TextView) findViewById(R.id.tvParent);
         nome_genitore.setText(db.getParentName());
 
+        String p = db.getProfilePhotoParent();
+        String c = db.getProfilePhotoChildren();
+
+        imageButtonParent = (ImageButton)findViewById(R.id.imageButton_parent);
+        imageButtonKid = (ImageButton) findViewById(R.id.imageButton_kid);
+
+        if (!p.equals("null")) {
+            File parent_photo = new File(p);
+            if(parent_photo.exists() && !parent_photo.isDirectory()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(parent_photo.getAbsolutePath());
+                imageButtonParent.setImageBitmap(getCroppedBitmap(myBitmap));
+            }
+        }
+        if (!c.equals("null")) {
+            File child_photo = new File(c);
+            if(child_photo.exists() && !child_photo.isDirectory()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(child_photo.getAbsolutePath());
+                imageButtonKid.setImageBitmap(getCroppedBitmap(myBitmap));
+            }
+        }
+
         db.close();
-        parent_button = (ImageButton)findViewById(R.id.imageButton_parent);
-        kid_button = (ImageButton) findViewById(R.id.imageButton_kid);
+
 
         modifica_button = (ImageButton)findViewById(R.id.button_modify);
 
-        if(FirstLoginActivity.bitmapParent!=null)
-        parent_button.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapParent));
-
-        if(FirstLoginActivity.bitmapKid!=null)
-        kid_button.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapKid));
-
-        if(FirstLoginActivity.uriParent!=null) {
-            parent_button.setImageURI(FirstLoginActivity.uriParent);
-            parent_button.setImageBitmap(getCroppedBitmap(drawableToBitmap(parent_button.getDrawable())));
-        }
-        if(FirstLoginActivity.uriKid!=null) {
-            kid_button.setImageURI(FirstLoginActivity.uriKid);
-            kid_button.setImageBitmap(getCroppedBitmap(drawableToBitmap(kid_button.getDrawable())));
-        }
-
-        parent_button.setOnClickListener(new View.OnClickListener() {
+        imageButtonParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Entering the menu", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Entering the menu", Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                //myIntent.putExtra("chi", "parent");
                 LoginActivity.this.startActivity(myIntent);
             }
         });
+
+        imageButtonKid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getApplicationContext(), "Entering the menu", Toast.LENGTH_LONG).show();
+                Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                //myIntent.putExtra("chi", "child");
+                LoginActivity.this.startActivity(myIntent);
+            }
+        });
+
         modifica_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Entering the modify menu", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Entering the modify menu", Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(LoginActivity.this, ModificaActivity.class);
                 LoginActivity.this.startActivity(myIntent);
             }

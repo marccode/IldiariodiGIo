@@ -326,8 +326,8 @@ public class AudioGridActivity extends AppCompatActivity {
 
     private void deleteAudio() {
         AlertDialog.Builder alert = new AlertDialog.Builder(AudioGridActivity.this);
-        alert.setTitle("Eliminare canzone");
-        alert.setMessage("Vuoi eliminare la canzone \"" + names.get(menu_selected) + "\"?");
+        alert.setTitle("Cancelare canzone");
+        alert.setMessage("Vuoi cancelare la canzone \"" + names.get(menu_selected) + "\"?");
         alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 
             @Override

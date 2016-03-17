@@ -3,6 +3,7 @@ package com.polimi.deib.ildiariodigio;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,6 +18,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -33,18 +35,24 @@ public class ModificaActivity extends AppCompatActivity {
 
     boolean genitore=true;
 
-    private String APP_DIRECTORY = "myPictureApp/";
-    private String MEDIA_DIRECTORY = APP_DIRECTORY + "media";
+    private String APP_DIRECTORY = "IlDiarioDiGio/";
+    private String MEDIA_DIRECTORY = APP_DIRECTORY + "Profiles";
     private String TEMPORAL_PICTURE_NAME="temporal.jpg";
 
-    private final String PARENT_PICTURE_NAME = "profile_picture_parent.jpg";
-    private final String KID_PICTURE_NAME = "profile_picture_kid.jpg";
+    private final String PARENT_PICTURE_NAME = "parent.jpg";
+    private final String KID_PICTURE_NAME = "child.jpg";
+
+    private Uri parent_image_path_uri;// = "/sdcard/IlDiarioDiGio/Profiles/parent.jpg";
+    private Uri child_image_path_uri; // = "/sdcard/IlDiarioDiGio/Profiles/child.jpg";
+
+    private String default_parent_image_path = "/sdcard/parent_profile_image.jpg";
+    private String default_child_image_path = "/sdcard/child_profile_image.jpg";
 
     private final int PHOTO_CODE=400;
     private final int SELECT_PICTURE=200;
 
-    public static Uri uriMParent;
-    public static Uri uriMKid;
+    public static Uri uriParent;
+    public static Uri uriKid;
     public static Bitmap bitmapMParent;
     public static Bitmap bitmapMKid;
 
@@ -63,8 +71,31 @@ public class ModificaActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_modifica);
 
+        imageButtonParent = (ImageButton) findViewById(R.id.imageButton_modifica_parent);
+        imageButtonKid = (ImageButton) findViewById(R.id.imageButton_modifica_kid);
+
         db= new DBAdapter(getApplicationContext());
         db.open();
+        //child_image_path_uri.fromFile(new File(db.getProfilePhotoChildren()));
+        //parent_image_path_uri.fromFile(new File(db.getProfilePhotoParent()));
+
+        String p = db.getProfilePhotoParent();
+        String c = db.getProfilePhotoChildren();
+
+        if (!p.equals("null")) {
+            File parent_photo = new File(p);
+            if(parent_photo.exists() && !parent_photo.isDirectory()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(parent_photo.getAbsolutePath());
+                imageButtonParent.setImageBitmap(getCroppedBitmap(myBitmap));
+            }
+        }
+        if (!c.equals("null")) {
+            File child_photo = new File(c);
+            if(child_photo.exists() && !child_photo.isDirectory()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(child_photo.getAbsolutePath());
+                imageButtonKid.setImageBitmap(getCroppedBitmap(myBitmap));
+            }
+        }
 
         nome_bambino=(EditText) findViewById(R.id.EditxKid);
         nome_bambino.setHint(db.getChildrenName());
@@ -72,22 +103,7 @@ public class ModificaActivity extends AppCompatActivity {
         nome_genitore=(EditText) findViewById((R.id.EditxParent));
         nome_genitore.setHint(db.getParentName());
 
-        imageButtonParent = (ImageButton) findViewById(R.id.imageButton_modifica_parent);
-        imageButtonKid = (ImageButton) findViewById(R.id.imageButton_modifica_kid);
 
-        if(FirstLoginActivity.bitmapParent!=null)
-            imageButtonParent.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapParent));
-        if(FirstLoginActivity.bitmapKid!=null) {
-            imageButtonKid.setImageBitmap(getCroppedBitmap(FirstLoginActivity.bitmapKid));
-        }
-        if(FirstLoginActivity.uriParent!=null) {
-            imageButtonParent.setImageURI(FirstLoginActivity.uriParent);
-            imageButtonParent.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonParent.getDrawable())));
-        }
-        if(FirstLoginActivity.uriKid!=null) {
-            imageButtonKid.setImageURI(FirstLoginActivity.uriKid);
-            imageButtonKid.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonKid.getDrawable())));
-        }
         imageButtonParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,15 +159,6 @@ public class ModificaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (FirstLoginActivity.bitmapParent != bitmapMParent)
-                    FirstLoginActivity.bitmapParent = bitmapMParent;
-                if (FirstLoginActivity.bitmapKid != bitmapMKid)
-                    FirstLoginActivity.bitmapKid = bitmapMKid;
-                if (FirstLoginActivity.uriParent != uriMParent)
-                    FirstLoginActivity.uriParent = uriMParent;
-                if (FirstLoginActivity.uriKid != uriMKid)
-                    FirstLoginActivity.uriKid = uriMKid;
-
                 if (!nome_bambino.getText().toString().equals(""))
                     db.setChildrenName(nome_bambino.getText().toString());
                 if (!nome_genitore.getText().toString().equals(""))
@@ -174,11 +181,9 @@ public class ModificaActivity extends AppCompatActivity {
         file.mkdirs();
 
         File newFile;
-        newFile = new File(path + PARENT_PICTURE_NAME);
+        newFile = new File(default_parent_image_path);
         if(!genitore)
-            newFile = new File(path + KID_PICTURE_NAME);
-
-
+            newFile = new File(default_child_image_path);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -193,25 +198,58 @@ public class ModificaActivity extends AppCompatActivity {
 
         switch(requestCode){
             case PHOTO_CODE:
-                if(resultCode == RESULT_OK)
-                    decodeBitmap(path);
+                if(resultCode == RESULT_OK) {
+                    //decodeBitmap(path);
+                    if (genitore) {
+                        File parent_photo = new File(default_parent_image_path);
+                        if(parent_photo.exists() && !parent_photo.isDirectory()) {
+                            Bitmap myBitmap = BitmapFactory.decodeFile(parent_photo.getAbsolutePath());
+                            imageButtonParent.setImageBitmap(getCroppedBitmap(myBitmap));
+                        }
+                        db.setProfilePhotoParent(default_parent_image_path);
+                    }
+                    else {
+                        File child_photo = new File(default_child_image_path);
+                        if(child_photo.exists() && !child_photo.isDirectory()) {
+                            Bitmap myBitmap = BitmapFactory.decodeFile(child_photo.getAbsolutePath());
+                            imageButtonKid.setImageBitmap(getCroppedBitmap(myBitmap));
+                        }
+                        db.setProfilePhotoChildren(default_child_image_path);
+                    }
+                }
                 break;
             case SELECT_PICTURE:
                 if(resultCode == RESULT_OK) {
                     if(genitore) {
-                        uriMParent=data.getData();
-                        imageButtonParent.setImageURI(uriMParent);
+                        uriParent=data.getData();
+                        imageButtonParent.setImageURI(uriParent);
                         imageButtonParent.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonParent.getDrawable())));
+                        Log.e("GGG", getRealPathFromURI(uriParent));
+                        db.setProfilePhotoParent(getRealPathFromURI(uriParent));
 
                     }else {
-                        uriMKid=data.getData();
-                        imageButtonKid.setImageURI(uriMKid);
+                        uriKid=data.getData();
+                        imageButtonKid.setImageURI(uriKid);
                         imageButtonKid.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonKid.getDrawable())));
-
+                        db.setProfilePhotoChildren(getRealPathFromURI(uriKid));
                     }
                 }
                 break;
         }
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
     }
 
     public static Bitmap getCroppedBitmap(Bitmap bitmap) {

@@ -328,8 +328,8 @@ public class VideoGridActivity extends AppCompatActivity {
 
     private void deleteAudio() {
         AlertDialog.Builder alert = new AlertDialog.Builder(VideoGridActivity.this);
-        alert.setTitle("Eliminare video");
-        alert.setMessage("Vuoi eliminare il video \"" + names.get(menu_selected) + "\"?");
+        alert.setTitle("Cancelare video");
+        alert.setMessage("Vuoi cancelare il video \"" + names.get(menu_selected) + "\"?");
         alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 
             @Override

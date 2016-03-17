@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +46,7 @@ public class DiarioGridActivity extends AppCompatActivity {
 
     GenericModelAdapter adapter;
     ListView listView;
-    private static final int NUMBER_OF_COLS = 4;
+    private static final int NUMBER_OF_COLS = 3;
     List<Map<String, List<Object>>> items = new ArrayList<Map<String, List<Object>>>();
     Map<String, String> sectionHeaderTitles = new HashMap<String, String>();
 
@@ -50,6 +57,20 @@ public class DiarioGridActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diario_grid);
 
+        ImageView profile_pic = (ImageView) findViewById(R.id.imageview_profile);
+        DBAdapter db2 = new DBAdapter(getApplicationContext());
+        db2.open();
+        String path = db2.getProfilePhotoChildren();
+        if (!path.equals("null")) {
+            File parent_photo = new File(path);
+            if(parent_photo.exists() && !parent_photo.isDirectory()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(parent_photo.getAbsolutePath());
+                profile_pic.setImageBitmap(getCroppedBitmap(myBitmap));
+            }
+        }
+        db2.close();
+
+
         photos = new ArrayList<Photo>();
         DBAdapter db = new DBAdapter(getApplicationContext());
         db.open();
@@ -59,7 +80,7 @@ public class DiarioGridActivity extends AppCompatActivity {
         }
         while (!c.isAfterLast()) {
             Log.e("TAG", Integer.toString(c.getInt(0)) + " ,PATH: " + c.getString(1) + " ,DATE: " + c.getString(2));
-            Photo p = new Photo(c.getInt(0), c.getString(1), c.getString(2));
+            Photo p = new Photo(c.getInt(0), c.getString(1), c.getString(2), c.getString(3));
             photos.add(p);
             c.moveToNext();
         }
@@ -71,7 +92,7 @@ public class DiarioGridActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DiarioGridActivity.this, HomeActivity.class);
+                Intent intent = new Intent(DiarioGridActivity.this, DiarioMenuActivity.class);
                 DiarioGridActivity.this.startActivity(intent);
             }
         });
@@ -102,13 +123,47 @@ public class DiarioGridActivity extends AppCompatActivity {
         }
     };
 
+    public static Bitmap getCroppedBitmap(Bitmap bitmap) {
+        Bitmap output;
+
+        if (bitmap.getWidth() > bitmap.getHeight()) {
+            output = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        } else {
+            output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getWidth(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        float r = 0;
+
+        if (bitmap.getWidth() > bitmap.getHeight()) {
+            r = bitmap.getHeight() / 2;
+        } else {
+            r = bitmap.getWidth() / 2;
+        }
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawCircle(r, r, r, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
+    }
+
     private class Photo {
         public int id;
+        public String name;
         public String date;
         public String path;
 
-        public Photo(int id, String path, String date) {
+        public Photo(int id, String path, String date, String name) {
             this.id = id;
+            this.name = name;
             this.date = date;
             this.path = path;
         }
@@ -124,12 +179,14 @@ public class DiarioGridActivity extends AppCompatActivity {
         LayoutInflater layoutInflater;
         View.OnClickListener mItemClickListener;
         Map<String, String> sectionHeaderTitles;
+        ArrayList<Integer> header_positions;
+        int pos;
 
         // <JO>
         Date last_date;
 
         ArrayList<ArrayList<Photo>> days;
-        boolean header;
+        //boolean header;
         int aux;
         // </JO>
 
@@ -144,94 +201,169 @@ public class DiarioGridActivity extends AppCompatActivity {
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.mItemClickListener = mItemClickListener;
             this.sectionHeaderTitles = sectionHeaderTitles;
+            header_positions = new ArrayList<>();
 
             // <JO>
-            aux = 1;
-            header = true;
-            try {
-                last_date = new SimpleDateFormat("yyyy-MM-dd").parse(photos.get(0).date);
-            }catch(java.text.ParseException e) {
-                e.printStackTrace();
-            }
-            days = new ArrayList<ArrayList<Photo>>();
-            days.add(new ArrayList<Photo>());
-            int j = 0;
-            int size = photos.size();
-            for (int i = 0; i < size; ++i) {
-                Date d = new Date();
+            //header = true;
+            if (photos.size() > 0) {
                 try {
-                    d = new SimpleDateFormat("yyyy-MM-dd").parse(photos.get(i).date);
-                } catch(java.text.ParseException e) {
+                    last_date = new SimpleDateFormat("yyyy-MM-dd").parse(photos.get(0).date);
+                } catch (java.text.ParseException e) {
                     e.printStackTrace();
                 }
-                if (d.after(last_date)) {
-                    days.add(new ArrayList<Photo>());
-                    ++j;
+                days = new ArrayList<ArrayList<Photo>>();
+                days.add(new ArrayList<Photo>());
+                header_positions.add(0);
+                pos = 1;
+                int column_count = 0;
+                int j = 0;
+                int size = photos.size();
+                for (int i = 0; i < size; ++i) {
+                    Date d = new Date();
+                    try {
+                        d = new SimpleDateFormat("yyyy-MM-dd").parse(photos.get(i).date);
+                    } catch (java.text.ParseException e) {
+                        e.printStackTrace();
+                    }
+                    //if (d.after(last_date)) {
+                    if (!d.toString().equals(last_date.toString())) {
+                        Log.e("AAA", " COMPARATION: " + d.toString() + " != " + last_date.toString());
+                        days.add(new ArrayList<Photo>());
+                        last_date = d;
+                        ++j;
+                        ++pos;
+                        header_positions.add(pos);
+                        ++pos;
+                        column_count = 0;
+                    }
+                    if (column_count == numberOfCols) {
+                        // NEW ROW
+                        column_count = 0;
+                        ++pos;
+                    } else {
+                        ++column_count;
+                    }
+                    Photo p = photos.get(i);
+                    days.get(j).add(p);
                 }
-                Photo p = photos.get(i);
-                days.get(j).add(p);
-            }
 
-            for (int i = 0; i < days.size(); ++i) {
-                Log.e("TAG", Integer.toString(days.get(i).size()));
+                Log.e("AAA", "Number of days: " + Integer.toString(days.size()));
+                for (int i = 0; i < days.size(); ++i) {
+                    Log.e("AAA", "Number of photos in day " + Integer.toString(i) + ": " + Integer.toString(days.get(i).size()));
+                }
             }
-            // </JO>
+            else {
+                pos = -1;
+            }
+        }
+
+        private boolean isHeader(int position) {
+            return header_positions.contains(position);
+        }
+
+        private int getAux(int num) {
+            int size = header_positions.size();
+            for (int i = 0; i < size; ++i) {
+                if (num < header_positions.get(i)){
+                    return i-1;
+                }
+            }
+            return size -1;
+        }
+
+        private int getDiff(int position) {
+            int size = header_positions.size();
+            for (int i = 0; i < size; ++i) {
+                if (position < header_positions.get(i)){
+                    return (position - header_positions.get(i-1));
+                }
+            }
+            return (position - header_positions.get(size-1));
+        }
+
+        private int getI(int num, int position) {
+            return num + (3 * (getDiff(position) - 1));
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
-
+            Log.e("AAA", "getView");
+            aux = position / 2;
             // <JO>
-            if (header) {
+            if (isHeader(position)) {
                 convertView = layoutInflater.inflate(R.layout.grid_header_view, null);
                 TextView headerText = (TextView)convertView.findViewById(R.id.headerText);
-                String date_string = getDateString(days.get(position).get(0).date);
+                Log.e("AAA", "--- IF ---");
+                Log.e("AAA", "POSITION: " + Integer.toString(position));
+                String date_string = getDateString(days.get(getAux(position)).get(0).date);
                 headerText.setText(date_string);
-                header = false;
+                //header = false;
                 return convertView;
             }
             else {
                 LinearLayout row = (LinearLayout)layoutInflater.inflate(R.layout.row_item, null);
 
-                Map<String, List<Object>> map = getItem(position);
-                List<Object> list = map.get(getItemTypeAtPosition(position));
+                //Map<String, List<Object>> map = getItem(position);
+                //List<Object> list = map.get(getItemTypeAtPosition(position));
 
-                int size_day = days.get(position - aux).size();
-                for (int i = 0; i < size_day; i++){
-                    FrameLayout grid = (FrameLayout)layoutInflater.inflate(R.layout.grid_item, row, false);
+                Log.e("AAA", "--- ELSE ---");
+                Log.e("AAA", "POSITION: " + Integer.toString(position));
+                Log.e("AAA", "AUX: " + Integer.toString(getAux(position)));
+                Log.e("AAA", "DAYS SIZE: " + Integer.toString(days.size()));
+                int size_day = days.get(getAux(position)).size();
+                //for (int i = 0; i < size_day; i++){
+                for (int i = 0; i < numberOfCols; i++){
+                    Log.e("AAA", "FOR ITERATION: " + Integer.toString(i));
+                    FrameLayout grid = (FrameLayout) layoutInflater.inflate(R.layout.grid_item, row, false);
                     ImageView imageView;
-                    if (i < list.size()){
-                        if (grid != null){
-                            imageView = (ImageView)grid.findViewWithTag("image");
-                            File imgFile = new  File(days.get(position - aux).get(i).path);
+                    Log.e("BBB", "ANTES IF getI: " + Integer.toString(getI(i, position)));
+                    Log.e("BBB", "ANTES IF POSITION: " + Integer.toString(position));
+                    if (getI(i, position) < days.get(getAux(position)).size()) {
+                        //if (i < list.size()){
+                        //    if (grid != null){
+                        imageView = (ImageView) grid.findViewWithTag("image");
+                        //Log.e("BBB", "getAux: " + Integer.toString(getAux(position)) + "; Position: " + Integer.toString(position) + "; i: " + Integer.toString(i));
+                        Log.e("BBB", "getI: " + Integer.toString(getI(i, position)));
+                        File imgFile = new File(days.get(getAux(position)).get(getI(i, position)).path);
 
-                            if(imgFile.exists()){
+                        if (imgFile.exists()) {
 
-                                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                            Picasso.with(getApplicationContext()).load(imgFile).into(imageView);
 
-                                imageView.setImageBitmap(myBitmap);
+                            //Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
-                            }
+                            //imageView.setImageBitmap(myBitmap);
 
-                            TextView textView = (TextView)grid.findViewWithTag("subHeader");
-                            textView.setText(Integer.toString(days.get(position - aux).get(i).id));
-
-                            //grid.setTag(R.id.row, position);
-                            //grid.setTag(R.id.col, i);
-                            grid.setOnClickListener(mItemClickListener);
                         }
-                    }
-                    else {
-                        if (grid != null){
+
+                        TextView textView = (TextView) grid.findViewWithTag("subHeader");
+                        final int id = days.get(getAux(position)).get(getI(i, position)).id;
+                        String photo_name = days.get(getAux(position)).get(getI(i, position)).name;
+                        textView.setText(photo_name);
+
+                        //grid.setTag(R.id.row, position);
+                        //grid.setTag(R.id.col, i);
+                        grid.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //Toast.makeText(getApplicationContext(), Integer.toString(id), Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(DiarioGridActivity.this, FotoDiarioActivity.class);
+                                i.putExtra("id", id);
+                                DiarioGridActivity.this.startActivity(i);
+                            }
+                        });
+
+                    }else {
+                        if (grid != null) {
                             grid.setVisibility(View.INVISIBLE);
                             grid.setOnClickListener(null);
                         }
+                        i = numberOfCols;
                     }
                     row.addView(grid);
                 }
-                header = true;
-                ++aux;
+                //header = true;
+                //++aux;
                 return row;
             }
         }
@@ -256,7 +388,7 @@ public class DiarioGridActivity extends AppCompatActivity {
                     break;
 
                 case 4:
-                    month_string = "marzo";
+                    month_string = "aprile";
                     break;
 
                 case 5:
@@ -297,18 +429,25 @@ public class DiarioGridActivity extends AppCompatActivity {
 
             String year_string = "";
             Date now = new Date();
-           if (now.getYear() != year) {
+            if (now.getYear() != year) {
                 year_string = " " + Integer.toString(year);
             }
 
             Date d = new Date();
             try {
                 d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+                Log.e("fecha",d.toString());
             } catch(java.text.ParseException e) {
                 e.printStackTrace();
             }
             String weekday_string = "Oggi";
-            if (!now.equals(d)) {
+            now.setHours(0);
+            now.setMinutes(0);
+            now.setSeconds(0);
+
+            Log.e("fecha_actual", now.toString());
+
+            if (!now.toString().equals(d.toString())) {
                 Calendar c = Calendar.getInstance();
                 c.setTime(d);
                 int weekday = c.get(Calendar.DAY_OF_WEEK);
@@ -343,57 +482,16 @@ public class DiarioGridActivity extends AppCompatActivity {
                         break;
                 }
             }
-
             return weekday_string + ", " + day_string + " " + month_string + year_string;
         }
 
         @Override
         public int getCount() {
-            int totalItems = 0;
-            for (Map<String, List<Object>> map : items){
-                Set<String> set = map.keySet();
-                for(String key : set){
-                    //calculate the number of rows each set homogeneous grid would occupy
-                    List<Object> l = map.get(key);
-                    int rows = l.size() % numberOfCols == 0 ? l.size() / numberOfCols : (l.size() / numberOfCols) + 1;
-
-                    // insert the header position
-                    if (rows > 0){
-                        headerPositions.add(String.valueOf(totalItems));
-                        offsetForItemTypeMap.put(key, totalItems);
-
-                        itemTypePositionsMap.put(key, totalItems + "," + (totalItems + rows) );
-                        totalItems += 1; // header view takes up one position
-                    }
-                    totalItems+= rows;
-                }
-            }
-            return totalItems;
+            return pos + 1;
         }
 
         @Override
         public Map<String, List<Object>> getItem(int position) {
-            if (!isHeaderPosition(position)){
-                String itemType = getItemTypeAtPosition(position);
-                List<Object> list = null;
-                for (Map<String, List<Object>> map : items) {
-                    if (map.containsKey(itemType)){
-                        list = map.get(itemType);
-                        break;
-                    }
-                }
-                if (list != null){
-                    int offset = position - getOffsetForItemType(itemType);
-                    //remove header position
-                    offset -= 1;
-                    int low = offset * numberOfCols;
-                    int high = low + numberOfCols  < list.size() ? (low + numberOfCols) : list.size();
-                    List<Object> subList = list.subList(low, high);
-                    Map<String, List<Object>> subListMap = new HashMap<String, List<Object>>();
-                    subListMap.put(itemType, subList);
-                    return subListMap;
-                }
-            }
             return null;
         }
 

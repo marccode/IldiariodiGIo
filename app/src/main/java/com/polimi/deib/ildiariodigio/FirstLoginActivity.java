@@ -5,6 +5,7 @@ package com.polimi.deib.ildiariodigio;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,6 +22,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,6 +46,9 @@ public class FirstLoginActivity extends AppCompatActivity {
 
    private final String PARENT_PICTURE_NAME = "profile_picture_parent.jpg";
    private final String KID_PICTURE_NAME = "profile_picture_kid.jpg";
+
+    private String default_parent_image_path = "/sdcard/parent_profile_image.jpg";
+    private String default_child_image_path = "/sdcard/child_profile_image.jpg";
 
     private final int PHOTO_CODE=400;
     private final int SELECT_PICTURE=200;
@@ -158,7 +163,7 @@ public class FirstLoginActivity extends AppCompatActivity {
 
                 db.close();
 
-                Toast.makeText(getApplicationContext(), "Entering the menu to choose", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Entering the menu to choose", Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(FirstLoginActivity.this, LoginActivity.class);
                 FirstLoginActivity.this.startActivity(myIntent);
             }
@@ -170,17 +175,15 @@ public class FirstLoginActivity extends AppCompatActivity {
         file= new File (Environment.getExternalStorageDirectory(),MEDIA_DIRECTORY);
         file.mkdirs();
 
-        File newFile;
-        newFile = new File(path + PARENT_PICTURE_NAME);
+        File newFile = new File(default_parent_image_path);
         if(!genitore)
-        newFile = new File(path + KID_PICTURE_NAME);
-
-
+            newFile = new File(default_child_image_path);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(newFile));
         startActivityForResult(intent, PHOTO_CODE);
+
 
     }
 
@@ -190,28 +193,59 @@ public class FirstLoginActivity extends AppCompatActivity {
 
         switch(requestCode){
             case PHOTO_CODE:
-                if(resultCode == RESULT_OK)
-                    decodeBitmap(path);
+                if(resultCode == RESULT_OK) {
+                    //decodeBitmap(path);
+                    if (genitore) {
+                        File parent_photo = new File(default_parent_image_path);
+                        if(parent_photo.exists() && !parent_photo.isDirectory()) {
+                            Bitmap myBitmap = BitmapFactory.decodeFile(parent_photo.getAbsolutePath());
+                            imageButtonParent.setImageBitmap(getCroppedBitmap(myBitmap));
+                        }
+                        db.setProfilePhotoParent(default_parent_image_path);
+                    }
+                    else {
+                        File child_photo = new File(default_child_image_path);
+                        if(child_photo.exists() && !child_photo.isDirectory()) {
+                            Bitmap myBitmap = BitmapFactory.decodeFile(child_photo.getAbsolutePath());
+                            imageButtonKid.setImageBitmap(getCroppedBitmap(myBitmap));
+                        }
+                        db.setProfilePhotoChildren(default_child_image_path);
+                    }
+                }
                 break;
             case SELECT_PICTURE:
                 if(resultCode == RESULT_OK) {
                     if(genitore) {
-                        bitmapParent=null;
                         uriParent=data.getData();
                         imageButtonParent.setImageURI(uriParent);
                         imageButtonParent.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonParent.getDrawable())));
+                        db.setProfilePhotoParent(getRealPathFromURI(uriParent));
 
                     }else {
-                        bitmapKid=null;
                         uriKid=data.getData();
                         imageButtonKid.setImageURI(uriKid);
                         imageButtonKid.setImageBitmap(getCroppedBitmap(drawableToBitmap(imageButtonKid.getDrawable())));
-
+                        db.setProfilePhotoChildren(getRealPathFromURI(uriKid));
                     }
                 }
                 break;
         }
     }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
     public static Bitmap getCroppedBitmap(Bitmap bitmap) {
         Bitmap output;
 

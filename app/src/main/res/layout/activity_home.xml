@@ -7,8 +7,8 @@
 
     <ImageButton
         android:id="@+id/imageButton_back"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
         android:scaleType="fitXY"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -35,7 +35,8 @@
         android:orientation="vertical"
         android:layout_below="@id/textView_title"
         android:layout_marginTop="35dip"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:weightSum="90">
 
         <Button
             android:id="@+id/button_cronometro"
@@ -44,9 +45,12 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:layout_marginBottom="10dip"
-            android:drawableRight="@android:drawable/btn_star_big_on"
+            android:drawableRight="@drawable/flecha_home"
             android:background="@color/orange"
-            android:text="Cronometro"/>
+            android:text="Cronometro"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
 
         <Button
             android:id="@+id/button_agenda"
@@ -55,9 +59,12 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:layout_marginBottom="10dip"
-            android:drawableRight="@android:drawable/btn_star_big_on"
+            android:drawableRight="@drawable/flecha_home"
             android:background="@color/red"
-            android:text="Agenda"/>
+            android:text="Agenda"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
 
         <Button
             android:id="@+id/button_ricorda"
@@ -66,9 +73,12 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:layout_marginBottom="10dip"
-            android:drawableRight="@android:drawable/btn_star_big_on"
+            android:drawableRight="@drawable/flecha_home"
             android:background="@color/green"
-            android:text="Ricorda"/>
+            android:text="Ricorda"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
 
         <Button
             android:id="@+id/button_attivita"
@@ -77,9 +87,12 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:layout_marginBottom="10dip"
-            android:drawableRight="@android:drawable/btn_star_big_on"
+            android:drawableRight="@drawable/flecha_home"
             android:background="@color/blue"
-            android:text="Attività"/>
+            android:text="Attività"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
 
         <Button
             android:id="@+id/button_diario"
@@ -88,9 +101,12 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:layout_marginBottom="10dip"
-            android:drawableRight="@android:drawable/btn_star_big_on"
+            android:drawableRight="@drawable/flecha_home"
             android:background="@color/dark_blue"
-            android:text="Diario"/>
+            android:text="Diario"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
     </LinearLayout>
 
 </RelativeLayout>

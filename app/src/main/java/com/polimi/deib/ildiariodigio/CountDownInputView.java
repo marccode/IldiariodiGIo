@@ -89,6 +89,33 @@ public class CountDownInputView extends View {
     }
 
     @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            Log.e("SOC", "asdasd");
+            checkInputCoherence();
+            //hide keyboard
+            InputMethodManager mgr = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(this.getWindowToken(), 0);
+            //lose focus
+            this.clearFocus();
+            return true;
+        }
+        /*
+        else if (keyCode == KeyEvent.KEYCODE_DEL) {
+            time = time.substring(0, time.length()-1);
+            //String new_character = "" + (char) (event.getUnicodeChar());
+            time = "0".concat(time);
+            formated_time = format(time);
+            invalidate();
+            Log.e("SOC", "DEL");
+            return true;
+        }
+        */
+        return false;
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.e("TAG", "KEYCODE: " + Integer.toString(keyCode));
         if (keyCode == 4) {
@@ -103,11 +130,20 @@ public class CountDownInputView extends View {
             formated_time = format(time);
             invalidate();
         }
+        else if(keyCode == KeyEvent.KEYCODE_DEL){
+            Log.e("CODE", Integer.toString(keyCode));
+            time = time.substring(0, time.length()-1);
+            //String new_character = "" + (char) (event.getUnicodeChar());
+            time = "0".concat(time);
+            formated_time = format(time);
+            invalidate();
+        }
         else {
             Log.e("TAG", "ALTRES");
         }
         return super.onKeyDown(keyCode, event);
     }
+
     @Override
     public boolean onTouchEvent (MotionEvent event) {
         super.onTouchEvent(event);
@@ -210,6 +246,18 @@ public class CountDownInputView extends View {
         public MyInputConnection(View targetView, boolean fullEditor) {
             super(targetView, fullEditor);
             mycustomview = (CountDownInputView) targetView;
+        }
+
+        @Override
+        public boolean deleteSurroundingText(int beforeLength, int afterLength) {
+            // magic: in latest Android, deleteSurroundingText(1, 0) will be called for backspace
+            if (beforeLength == 1 && afterLength == 0) {
+                // backspace
+                return super.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+                        && super.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+            }
+
+            return super.deleteSurroundingText(beforeLength, afterLength);
         }
 
         public Editable getEditable() {
